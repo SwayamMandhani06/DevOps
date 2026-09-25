@@ -11,6 +11,7 @@
 | Subject | DevOps |
 | Assignment No. | 3 |
 | Academic Year | 2026–27 |
+| Report Document | [123B1B184_Assignment_3_DevOps.pdf](Report/123B1B184_Assignment_3_DevOps.pdf) |
 
 ## 1. Title
 **Infrastructure as Code using Terraform for AWS EC2 Provisioning**
@@ -78,7 +79,9 @@ Assignment-3/
 │   ├── outputs.tf
 │   ├── .gitignore
 │   └── terraform.tfvars
-├── screenshots/
+├── Report/
+│   └── 123B1B184_Assignment_3_DevOps.pdf
+├── Screenshots/
 │   ├── 01-terraform-version.png
 │   ├── 02-terraform-files.png
 │   ├── 03-terraform-plan.png

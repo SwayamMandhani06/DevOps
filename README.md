@@ -73,7 +73,7 @@ To study major Amazon Web Services (AWS) cloud computing solutions—including c
 
 ### Output / Evidence
 - **Screenshots**: 21 high-resolution captured figures located in [`Assignment-2/Screenshots/`](./Assignment-2/Screenshots/)
-- **Academic Report**: Comprehensive PDF report available at [`Assignment-2/Report/DevOps_Assignment_2_AWS_Report.pdf`](./Assignment-2/Report/DevOps_Assignment_2_AWS_Report.pdf)
+- **Academic Report**: Comprehensive PDF report available at [`Assignment-2/Report/123B1B184_Assignment_2_DevOps.pdf`](./Assignment-2/Report/123B1B184_Assignment_2_DevOps.pdf)
 
 ### Status
 **Completed**
@@ -169,7 +169,7 @@ The complete end-to-end workflow executed during the practical:
   - `06-terraform-state-output.png`: Verification of `terraform state list` and `terraform output`.
   - `07-nginx-web-verification.png`: Browser HTTP verification of NGINX on `http://65.0.73.47`.
   - `08-terraform-destroy.png`: Clean destruction of all resources via `terraform destroy`.
-- **Academic Report**: Comprehensive PDF report available at [`Assignment-3/Report/DevOps_Assignment_3_Terraform_Report.pdf`](./Assignment-3/Report/DevOps_Assignment_3_Terraform_Report.pdf).
+- **Academic Report**: Comprehensive PDF report available at [`Assignment-3/Report/123B1B184_Assignment_3_DevOps.pdf`](./Assignment-3/Report/123B1B184_Assignment_3_DevOps.pdf).
 
 ### Status
 **Completed**
@@ -221,7 +221,7 @@ DevOps/
 ├── Assignment-2/                                # Assignment 02: AWS Cloud Computing Services
 │   ├── README.md                                # Detailed Assignment 2 technical guide
 │   ├── Report/                                  # Complete academic submission report
-│   │   └── DevOps_Assignment_2_AWS_Report.pdf
+│   │   └── 123B1B184_Assignment_2_DevOps.pdf
 │   └── Screenshots/                             # High-resolution output verification (21 figures)
 │       ├── 01-aws-console-region.png
 │       ├── 02-ec2-dashboard.png
@@ -247,7 +247,7 @@ DevOps/
 └── Assignment-3/                                # Assignment 03: Infrastructure as Code using Terraform
     ├── README.md                                # Detailed Assignment 3 technical guide
     ├── Report/                                  # Academic submission report
-    │   └── DevOps_Assignment_3_Terraform_Report.pdf
+    │   └── 123B1B184_Assignment_3_DevOps.pdf
     ├── Screenshots/                             # Terraform provisioning verification screenshots
     │   ├── 01-terraform-version.png             # Terraform installation/version verification
     │   ├── 02-terraform-files.png               # Terraform configuration files structure
