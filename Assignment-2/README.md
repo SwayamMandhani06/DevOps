@@ -22,7 +22,7 @@ This repository contains the implementation, architecture, screenshots, and comp
 | **Batch** | C2 |
 | **Assignment No.** | 02 |
 | **Report Document** | [DevOps_Assignment_2_AWS_Report.pdf](Report/DevOps_Assignment_2_AWS_Report.pdf) |
-| **Repository Link** | [https://github.com/SwayamMandhani06/DevOps/Assignment-2](https://github.com/SwayamMandhani06/DevOps/Assignment-2) |
+| **Repository Link** | [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-2](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-2) |
 
 ---
 
@@ -464,4 +464,4 @@ The practical reinforced foundational DevOps and cloud engineering skills, parti
 - **Course**: DevOps (BCE27PE01)
 - **Institution**: Pimpri Chinchwad College of Engineering (PCCOE)
 - **Assignment**: DevOps Assignment 02 — AWS Cloud Computing Services
-- **GitHub Repository**: [https://github.com/SwayamMandhani06/DevOps/Assignment-2](https://github.com/SwayamMandhani06/DevOps/Assignment-2)
+- **GitHub Repository**: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-2](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-2)
