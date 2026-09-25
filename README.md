@@ -1,6 +1,6 @@
 # DevOps Practical Assignments
 
-This repository contains the DevOps practical assignments completed as part of the B.Tech Computer Engineering curriculum at Pimpri Chinchwad College of Engineering (PCCOE). Each assignment focuses on hands-on implementation of core DevOps methodologies and cloud engineering domains, including cloud compute lifecycle management, object storage, serverless computing, managed relational databases, traffic distribution via load balancers, container orchestration, Infrastructure as Code (IaC) with Terraform, and telemetry monitoring.
+This repository contains the DevOps practical assignments completed as part of the B.Tech Computer Engineering curriculum at Pimpri Chinchwad College of Engineering (PCCOE). Each assignment focuses on hands-on implementation of core DevOps methodologies and cloud engineering domains, including cloud compute lifecycle management, object storage, serverless computing, managed relational databases, traffic distribution via load balancers, container orchestration, Infrastructure as Code (IaC) with Terraform, application containerization with Docker, and telemetry monitoring.
 
 ---
 
@@ -25,9 +25,9 @@ This repository contains the DevOps practical assignments completed as part of t
 
 This repository serves as a centralized portfolio for all DevOps practical coursework and lab submissions. The repository is modularly organized: each practical assignment resides in its dedicated directory containing:
 - **`README.md`**: In-depth technical documentation, step-by-step procedure, configuration commands, architecture workflows, and evaluation notes.
-- **`Report/`**: Complete academic lab report in PDF format prepared according to the autonomous college submission template.
+- **`Report/`**: Complete academic lab report in PDF format prepared according to the autonomous college submission template (where applicable).
 - **`Screenshots/`**: High-resolution, numbered image evidence documenting every milestone of the implementation, configuration parameters, verified web outputs, and resource teardown.
-- **Source / Configuration Files**: Infrastructure as Code (IaC) templates, application configurations, scripts, and deployment descriptors where applicable.
+- **Source / Configuration Files**: Infrastructure as Code (IaC) templates, Docker container recipes, application source code, and deployment descriptors where applicable.
 
 ---
 
@@ -37,11 +37,11 @@ This repository serves as a centralized portfolio for all DevOps practical cours
 |---|---|---|---|---|
 | **Assignment 2** | AWS Cloud Computing Services & EC2 Practical Lifecycle | AWS EC2, S3, Lambda, RDS, ELB, ECS, CloudWatch, NGINX, Linux | **Completed** | [View Assignment 2](./Assignment-2/) |
 | **Assignment 3** | Infrastructure as Code (IaC) using Terraform for AWS EC2 Provisioning | Terraform, AWS EC2, Security Groups, NGINX, Ubuntu 24.04, AWS CLI | **Completed** | [View Assignment 3](./Assignment-3/) |
-| **Assignment 4** | Containerization with Docker | Docker, Dockerfile, Container Management | *Not yet completed* | *Scheduled* |
+| **Assignment 4** | Containerization with Docker — Create or Migrate an Application | Docker, Dockerfile, Container Lifecycle, Python 3.12, Flask | **Completed** | [View Assignment 4](./Assignment-4/) |
 | **Assignment 5** | Multi-Container Orchestration with Docker Compose | Docker Compose, Service Networking, Volumes | *Not yet completed* | *Scheduled* |
 
 > [!NOTE]
-> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2 and 3 are fully implemented, verified, and documented with complete screenshot evidence, configuration code, and academic reports. Subsequent curriculum assignments will be added as they are performed in the laboratory sessions.
+> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, and 4 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides. Subsequent curriculum assignments will be added as they are performed in the laboratory sessions.
 
 ---
 
@@ -180,6 +180,138 @@ The complete end-to-end workflow executed during the practical:
 
 ---
 
+## Assignment 4 — Create or Migrate an Application to Docker
+
+### Objective
+To containerize and package a Python Flask web application and its dependencies into a portable Docker image using a multi-step Dockerfile, execute it in an isolated Docker container with port mapping, verify application and health check endpoints, inspect container execution logs and internal filesystem, demonstrate container lifecycle management, and perform clean resource teardown.
+
+### Key Concepts / Technologies
+- **Application Containerization**: Encapsulating application code, runtime dependencies, and environment configuration into an immutable container image to eliminate environment discrepancy.
+- **Docker Engine & Docker Desktop**: Container runtime platform providing process isolation, resource abstraction, and CLI tooling for image and container management.
+- **Declarative Dockerfile**: Multi-layer build definition based on `python:3.12-slim`, establishing working directory (`/app`), caching dependencies (`pip install --no-cache-dir -r requirements.txt`), copying application files, exposing port `5000`, and defining runtime command `CMD ["python", "app.py"]`.
+- **Build Context Filtering (`.dockerignore`)**: Excluding bytecode caches (`__pycache__`, `*.pyc`), git directories (`.git`), virtual environments (`venv`), environment files (`.env`), and markdown documentation from the Docker build context.
+- **Python 3.12 & Flask Web Service**: Lightweight REST-compatible Python web application configured to listen on `0.0.0.0:5000` inside the container, implementing root (`/`) and health check (`/health`) routes.
+- **Port Mapping & Network Forwarding**: Exposing container port 5000 to host port 5000 (`-p 5000:5000`) for seamless HTTP access from host machine browsers and clients.
+- **Container Observability & Telemetry**: Inspecting container stdout/stderr output via `docker logs`, accessing the running container shell interactively via `docker exec -it <container> sh`, and verifying containerized file placement (`pwd`, `ls`).
+- **Container Lifecycle Operations**: Managing runtime states including starting, running in detached mode (`-d`), graceful stopping (`docker stop`), status queries (`docker ps`, `docker ps -a`), and restarting (`docker start`).
+- **Resource Decommissioning & Cleanup**: Stopping active containers, removing terminated container instances (`docker rm`), and deleting custom container images (`docker rmi`) to maintain clean local storage.
+
+### Core Project Files
+The containerized application is structured under [`Assignment-4/`](./Assignment-4/):
+- **[`app.py`](./Assignment-4/app.py)**: Python Flask application serving the home route (`/`) and health check route (`/health`), binding to `0.0.0.0:5000`.
+- **[`Dockerfile`](./Assignment-4/Dockerfile)**: Docker build recipe specifying the `python:3.12-slim` base image, working directory, package installation, port exposure, and execution entrypoint.
+- **[`requirements.txt`](./Assignment-4/requirements.txt)**: Python package dependency file pinning `Flask`.
+- **[`.dockerignore`](./Assignment-4/.dockerignore)**: Build context exclusion filter preventing unnecessary files and caches from entering the Docker image.
+- **[`README.md`](./Assignment-4/README.md)**: Detailed assignment guide with comprehensive build, execution, lifecycle, and verification commands.
+
+### Docker Workflow & Implementation
+The complete end-to-end containerization workflow executed during the practical:
+
+```text
+┌────────────────────┐       ┌────────────────────┐       ┌────────────────────┐
+│ Write Application  │ ───►  │   docker build     │ ───►  │    docker run      │
+│ (app.py, reqs,     │       │ (Build image:      │       │ (Run in background:│
+│  Dockerfile,       │       │  flask-docker-     │       │  -p 5000:5000      │
+│  .dockerignore)    │       │  app:v1)           │       │  flask-container)  │
+└────────────────────┘       └────────────────────┘       └─────────┬──────────┘
+                                                                    │
+┌────────────────────┐       ┌────────────────────┐                 │
+│   docker cleanup   │ ◄───  │Lifecycle Management│ ◄───────────────┤
+│(docker stop, rm,   │       │(docker stop, start,│                 ▼
+│ docker rmi image)  │       │ ps, ps -a checks)  │       ┌────────────────────┐
+└────────────────────┘       └────────────────────┘       │ Verify & Inspect   │
+                                                          │ - http://...:5000  │
+                                                          │ - /health endpoint │
+                                                          │ - docker logs      │
+                                                          │ - docker exec (sh) │
+                                                          └────────────────────┘
+```
+
+1. **Pre-requisite & Local Testing**:
+   - Verified Docker Engine installation and operational status using `docker --version`, `docker info`, and `docker run hello-world`.
+   - Tested the Flask application locally via `pip install -r requirements.txt` and `python app.py`.
+2. **Docker Image Build**:
+   - Built the Docker container image from the Dockerfile:
+     ```powershell
+     docker build -t flask-docker-app:v1 .
+     ```
+   - Verified image generation and metadata in local storage:
+     ```powershell
+     docker images
+     ```
+3. **Container Execution & Port Mapping**:
+   - Ran the containerized application in detached mode with host-to-container port mapping:
+     ```powershell
+     docker run -d -p 5000:5000 --name flask-container flask-docker-app:v1
+     ```
+   - Verified container running status and mapped ports using `docker ps`.
+4. **Application & Health Endpoint Verification**:
+   - Tested the primary application endpoint:
+     - URL: `http://localhost:5000`
+     - Response: `"Hello! My application is running inside Docker."`
+   - Tested the health check endpoint:
+     - URL: `http://localhost:5000/health`
+     - Response: `{"status": "healthy"}`
+5. **Logs & Container Shell Inspection**:
+   - Inspected application request logs streamed from the container:
+     ```powershell
+     docker logs flask-container
+     ```
+   - Opened an interactive shell inside the running container to inspect the working directory and files:
+     ```powershell
+     docker exec -it flask-container sh
+     pwd   # Output: /app
+     ls    # Output: Dockerfile app.py requirements.txt
+     exit
+     ```
+6. **Container Lifecycle Management**:
+   - Tested graceful container stopping:
+     ```powershell
+     docker stop flask-container
+     docker ps        # Confirmed container is no longer running
+     docker ps -a     # Confirmed container status is Exited (0)
+     ```
+   - Tested restarting the container:
+     ```powershell
+     docker start flask-container
+     docker ps        # Confirmed container resumed active running state
+     ```
+7. **Resource Teardown & Cleanup**:
+   - Stopped and removed the container and deleted the custom Docker image to maintain clean disk hygiene:
+     ```powershell
+     docker stop flask-container
+     docker rm flask-container
+     docker rmi flask-docker-app:v1
+     docker images    # Confirmed removal of custom image
+     ```
+
+### Output / Evidence
+- **Screenshots**: 13 comprehensive output verification screenshots located in [Assignment-4/Screenshots/](./Assignment-4/Screenshots/)
+- **Academic Report**: Comprehensive PDF report available at [Assignment-4/Report/123B1B184_Assignment_4_DevOps.pdf](./Assignment-4/Report/123B1B184_Assignment_4_DevOps.pdf)
+- **Practical Verification Milestones**: Verified through 13 practical execution milestones:
+  1. Local Flask application execution and verification
+  2. Local `/health` endpoint response
+  3. Successful Docker image build (`flask-docker-app:v1`)
+  4. Local `docker images` inventory listing
+  5. Container execution and port mapping verification (`5000:5000`)
+  6. Dockerized application response on `http://localhost:5000`
+  7. Dockerized `/health` response on `http://localhost:5000/health`
+  8. Container runtime stdout logs via `docker logs`
+  9. Interactive shell inspection (`pwd`, `ls`) inside container filesystem
+  10. Container stop operation and `docker ps -a` status check
+  11. Container restart operation via `docker start`
+  12. Container removal via `docker rm`
+  13. Docker image cleanup via `docker rmi`
+
+### Status
+**Completed**
+
+### Documentation
+- Folder: [Assignment-4/](./Assignment-4/)
+- GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-4](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-4)
+
+---
+
 # Technologies Used
 
 ### Cloud Computing Platform
@@ -197,19 +329,27 @@ The complete end-to-end workflow executed during the practical:
 ### Infrastructure as Code (IaC)
 - **HashiCorp Terraform** (Core CLI v1.5+, AWS Provider `~> 6.0`, State Management, Lifecycle Automation)
 
-### Web & Application Servers
+### Containers & Virtualization
+- **Docker Engine & Docker Desktop** (Container runtime, daemon, and image management)
+- **Dockerfile** (Declarative container build specifications)
+- **Docker CLI** (Image building, container execution, inspection, lifecycle, and teardown)
+
+### Web & Application Servers / Frameworks
+- **Flask** (Python lightweight web framework and REST service)
 - **NGINX** (HTTP Web Server & Reverse Proxy)
 
 ### Operating Systems, Tools & Shell
 - **Amazon Linux 2023** (Kernel 6.18, x86_64)
 - **Ubuntu 24.04 LTS** (Noble Numbat, x86_64)
+- **Debian / Python Slim** (`python:3.12-slim` container base image)
 - **Bash / Linux CLI** (systemd, dnf, apt, curl, core utilities)
-- **PowerShell** (Windows CLI execution for Terraform automation)
+- **PowerShell** (Windows CLI execution for Terraform and Docker automation)
 - **EC2 Instance Connect & SSH** (Secure remote shell access)
 
 ### Languages & Configuration Formats
+- **Python 3.12** (Flask web service, AWS Lambda handler)
 - **HashiCorp Configuration Language (HCL)** (Terraform configuration)
-- **Python 3.12** (AWS Lambda serverless handler)
+- **Dockerfile Syntax** (Container image build instructions)
 
 ---
 
@@ -244,31 +384,53 @@ DevOps/
 │       ├── 22-alb-creation.png
 │       ├── 23-alb-working.png
 │       └── 24-ecs-cluster.png
-└── Assignment-3/                                # Assignment 03: Infrastructure as Code using Terraform
-    ├── README.md                                # Detailed Assignment 3 technical guide
+├── Assignment-3/                                # Assignment 03: Infrastructure as Code using Terraform
+│   ├── README.md                                # Detailed Assignment 3 technical guide
+│   ├── Report/                                  # Academic submission report
+│   │   └── 123B1B184_Assignment_3_DevOps.pdf
+│   ├── Screenshots/                             # Terraform provisioning verification screenshots (8 figures)
+│   │   ├── 01-terraform-version.png
+│   │   ├── 02-terraform-files.png
+│   │   ├── 03-terraform-plan.png
+│   │   ├── 04-terraform-apply-success.png
+│   │   ├── 05-aws-ec2-running.png
+│   │   ├── 06-terraform-state-output.png
+│   │   ├── 07-nginx-web-verification.png
+│   │   └── 08-terraform-destroy.png
+│   └── terraform/                               # Terraform HCL configuration files
+│       ├── provider.tf
+│       ├── variables.tf
+│       ├── main.tf
+│       ├── outputs.tf
+│       └── .gitignore
+└── Assignment-4/                                # Assignment 04: Create or Migrate an Application to Docker
+    ├── README.md                                # Detailed Assignment 4 containerization guide
+    ├── app.py                                   # Python Flask web application (ports & health routes)
+    ├── requirements.txt                         # Application runtime dependencies (Flask)
+    ├── Dockerfile                               # Container build instructions (python:3.12-slim)
+    ├── .dockerignore                            # Build context ignore rules
     ├── Report/                                  # Academic submission report
-    │   └── 123B1B184_Assignment_3_DevOps.pdf
-    ├── Screenshots/                             # Terraform provisioning verification screenshots
-    │   ├── 01-terraform-version.png             # Terraform installation/version verification
-    │   ├── 02-terraform-files.png               # Terraform configuration files structure
-    │   ├── 03-terraform-plan.png                # Terraform execution plan output (+2 to add)
-    │   ├── 04-terraform-apply-success.png       # Successful Terraform apply completion
-    │   ├── 05-aws-ec2-running.png               # AWS console showing EC2 instance in Running state
-    │   ├── 06-terraform-state-output.png        # Terraform output and state inspection
-    │   ├── 07-nginx-web-verification.png        # NGINX HTTP web output verification on public IP
-    │   └── 08-terraform-destroy.png             # Clean infrastructure destruction via terraform destroy
-    └── terraform/                               # Terraform HCL configuration files
-        ├── provider.tf                          # Terraform and AWS provider definition
-        ├── variables.tf                         # Input variables declaration
-        ├── main.tf                              # Resource definitions (aws_instance, aws_security_group)
-        ├── outputs.tf                           # Output values definition
-        └── .gitignore                           # Terraform ignore rules (state, tfvars, .terraform)
+    │   └── 123B1B184_Assignment_4_DevOps.pdf
+    └── Screenshots/                             # Practical output verification screenshots (13 figures)
+        ├── 1-local-flask.png
+        ├── 2-flask-healthy.png
+        ├── 3-docker-build.png
+        ├── 4-docker-images.png
+        ├── 5-docker-run.png
+        ├── 6-dockerized-running.png
+        ├── 7-dockerized-health-check.png
+        ├── 8-docker-container-logs.png
+        ├── 9-applications-inside-docker.png
+        ├── 10-stopping-and-checking-status-of-container.png
+        ├── 11-restart-docker-container.png
+        ├── 12-container-removed.png
+        └── 13-docker-image-cleanup.png
 ```
 
 ---
 
 # Academic Compliance & Integrity
 
-- **Original Implementation**: All practical tasks were configured and executed individually on an active AWS cloud environment.
+- **Original Implementation**: All practical tasks were configured and executed individually across AWS cloud environments and local Docker container runtimes.
 - **Security & Privacy**: No confidential credentials, IAM secret access keys, database passwords, `.tfvars` variable files, or private key pairs (`.pem`) are stored in this repository.
-- **Cloud Governance**: All temporary cloud resources (EC2 instances, ALBs, Target Groups, RDS databases, S3 objects/buckets, Lambda functions, and Terraform-managed infrastructure) were decommissioned immediately following practical verification.
+- **Resource Governance & Teardown**: All temporary cloud resources (EC2 instances, ALBs, Target Groups, RDS databases, S3 objects/buckets, Lambda functions, Terraform-managed infrastructure) and local Docker containers/images were decommissioned immediately following practical verification.
