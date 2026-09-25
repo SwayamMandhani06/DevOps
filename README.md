@@ -161,14 +161,14 @@ The complete end-to-end workflow executed during the practical:
 
 ### Output / Evidence
 - **Screenshots**: 8 comprehensive output verification screenshots located in [`Assignment-3/Screenshots/`](./Assignment-3/Screenshots/):
-  - `01-terraform-version.png`: Terraform v1.5+ and AWS provider verification.
-  - `02-terraform-files.png`: Directory listing showing modular `.tf` file structure.
-  - `03-terraform-plan.png`: Execution plan output showing +2 resources to create.
-  - `04-terraform-apply-success.png`: Successful apply completion with output values.
+  - `1-terraform-version.png`: Terraform v1.5+ and AWS provider verification.
+  - `2-terraform-files.png`: Directory listing showing modular `.tf` file structure.
+  - `3-terraform-plan.png`: Execution plan output showing +2 resources to create.
+  - `4-terraform-apply-success.png`: Successful apply completion with output values.
   - `05-aws-ec2-running.png`: AWS Management Console confirming EC2 in `Running` state.
-  - `06-terraform-state-output.png`: Verification of `terraform state list` and `terraform output`.
+  - `6-terraform-state-output.png`: Verification of `terraform state list` and `terraform output`.
   - `07-nginx-web-verification.png`: Browser HTTP verification of NGINX on `http://65.0.73.47`.
-  - `08-terraform-destroy.png`: Clean destruction of all resources via `terraform destroy`.
+  - `8-terraform-destroy.png`: Clean destruction of all resources via `terraform destroy`.
 - **Academic Report**: Comprehensive PDF report available at [`Assignment-3/Report/123B1B184_Assignment_3_DevOps.pdf`](./Assignment-3/Report/123B1B184_Assignment_3_DevOps.pdf).
 
 ### Status
@@ -286,7 +286,7 @@ The complete end-to-end containerization workflow executed during the practical:
      ```
 
 ### Output / Evidence
-- **Screenshots**: 13 comprehensive output verification screenshots located in [Assignment-4/Screenshots/](./Assignment-4/Screenshots/)
+- **Screenshots**: 15 comprehensive output verification screenshots located in [Assignment-4/Screenshots/](./Assignment-4/Screenshots/)
 - **Academic Report**: Comprehensive PDF report available at [Assignment-4/Report/123B1B184_Assignment_4_DevOps.pdf](./Assignment-4/Report/123B1B184_Assignment_4_DevOps.pdf)
 - **Practical Verification Milestones**: Verified through 13 practical execution milestones:
   1. Local Flask application execution and verification
@@ -389,14 +389,14 @@ DevOps/
 │   ├── Report/                                  # Academic submission report
 │   │   └── 123B1B184_Assignment_3_DevOps.pdf
 │   ├── Screenshots/                             # Terraform provisioning verification screenshots (8 figures)
-│   │   ├── 01-terraform-version.png
-│   │   ├── 02-terraform-files.png
-│   │   ├── 03-terraform-plan.png
-│   │   ├── 04-terraform-apply-success.png
+│   │   ├── 1-terraform-version.png
+│   │   ├── 2-terraform-files.png
+│   │   ├── 3-terraform-plan.png
+│   │   ├── 4-terraform-apply-success.png
 │   │   ├── 05-aws-ec2-running.png
-│   │   ├── 06-terraform-state-output.png
+│   │   ├── 6-terraform-state-output.png
 │   │   ├── 07-nginx-web-verification.png
-│   │   └── 08-terraform-destroy.png
+│   │   └── 8-terraform-destroy.png
 │   └── terraform/                               # Terraform HCL configuration files
 │       ├── provider.tf
 │       ├── variables.tf
@@ -411,7 +411,9 @@ DevOps/
     ├── .dockerignore                            # Build context ignore rules
     ├── Report/                                  # Academic submission report
     │   └── 123B1B184_Assignment_4_DevOps.pdf
-    └── Screenshots/                             # Practical output verification screenshots (13 figures)
+    └── Screenshots/                             # Practical output verification screenshots (15 figures)
+        ├── 0-docker-verification (1).png
+        ├── 0-docker-verification.png
         ├── 1-local-flask.png
         ├── 2-flask-healthy.png
         ├── 3-docker-build.png

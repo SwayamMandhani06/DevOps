@@ -82,14 +82,14 @@ Assignment-3/
 ├── Report/
 │   └── 123B1B184_Assignment_3_DevOps.pdf
 ├── Screenshots/
-│   ├── 01-terraform-version.png
-│   ├── 02-terraform-files.png
-│   ├── 03-terraform-plan.png
-│   ├── 04-terraform-apply-success.png
-│   ├── 05-aws-ec2-running.png
-│   ├── 06-terraform-state-output.png
-│   ├── 07-nginx-web-verification.png
-│   └── 08-terraform-destroy.png
+│   ├── 1-terraform-version.png
+│   ├── 2-terraform-files.png
+│   ├── 3-terraform-plan.png
+│   ├── 4-terraform-apply-success.png
+│   ├── 5-aws-ec2-running.png
+│   ├── 6-terraform-state-output.png
+│   ├── 7-nginx-web-verification.png
+│   └── 8-terraform-destroy.png
 └── README.md
 ```
 
@@ -269,14 +269,14 @@ The EC2 public IP during verification was `65.0.73.47`. The infrastructure was s
 ## 12. Screenshots
 | Figure | Screenshot | Purpose |
 |---|---|---|
-| 1 | `01-terraform-version.png` | Terraform installation/version |
-| 2 | `02-terraform-files.png` | Terraform project files |
-| 3 | `03-terraform-plan.png` | Terraform execution plan |
-| 4 | `04-terraform-apply-success.png` | Successful provisioning |
-| 5 | `05-aws-ec2-running.png` | EC2 running in AWS |
-| 6 | `06-terraform-state-output.png` | Terraform outputs and state |
-| 7 | `07-nginx-web-verification.png` | NGINX web verification |
-| 8 | `08-terraform-destroy.png` | Final infrastructure cleanup |
+| 1 | [`1-terraform-version.png`](Screenshots/1-terraform-version.png) | Terraform installation/version |
+| 2 | [`2-terraform-files.png`](Screenshots/2-terraform-files.png) | Terraform project files |
+| 3 | [`3-terraform-plan.png`](Screenshots/3-terraform-plan.png) | Terraform execution plan |
+| 4 | [`4-terraform-apply-success.png`](Screenshots/4-terraform-apply-success.png) | Successful provisioning |
+| 5 | [`5-aws-ec2-running.png`](Screenshots/5-aws-ec2-running.png) | EC2 running in AWS |
+| 6 | [`6-terraform-state-output.png`](Screenshots/6-terraform-state-output.png) | Terraform outputs and state |
+| 7 | [`7-nginx-web-verification.png`](Screenshots/7-nginx-web-verification.png) | NGINX web verification |
+| 8 | [`8-terraform-destroy.png`](Screenshots/8-terraform-destroy.png) | Final infrastructure cleanup |
 
 ## 13. Result
 The AWS infrastructure was successfully provisioned using Terraform. The EC2 instance and security group were defined as code, the EC2 instance was verified, NGINX was accessed through HTTP, Terraform outputs/state were inspected, and all Terraform-managed resources were removed after completion.

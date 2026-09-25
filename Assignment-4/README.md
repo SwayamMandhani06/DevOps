@@ -25,7 +25,25 @@ Assignment-4/
 ├── requirements.txt
 ├── Dockerfile
 ├── .dockerignore
-└── README.md
+├── README.md
+├── Report/
+│   └── 123B1B184_Assignment_4_DevOps.pdf
+└── Screenshots/
+    ├── 0-docker-verification (1).png
+    ├── 0-docker-verification.png
+    ├── 1-local-flask.png
+    ├── 2-flask-healthy.png
+    ├── 3-docker-build.png
+    ├── 4-docker-images.png
+    ├── 5-docker-run.png
+    ├── 6-dockerized-running.png
+    ├── 7-dockerized-health-check.png
+    ├── 8-docker-container-logs.png
+    ├── 9-applications-inside-docker.png
+    ├── 10-stopping-and-checking-status-of-container.png
+    ├── 11-restart-docker-container.png
+    ├── 12-container-removed.png
+    └── 13-docker-image-cleanup.png
 ```
 
 ## Application
@@ -98,19 +116,24 @@ docker images
 The Flask application was successfully migrated to Docker. The image `flask-docker-app:v1` was built successfully and the application was run in `flask-container` with port `5000:5000`. The application and `/health` endpoint were verified, container logs and internal files were inspected, the container was restarted successfully, and the assignment resources were cleaned up.
 
 ## Screenshot Evidence
-1. Local Flask application
-2. Local `/health`
-3. Successful Docker build
-4. `docker images`
-5. Running container and port mapping
-6. Dockerized application
-7. Dockerized `/health`
-8. Container logs
-9. Container shell inspection
-10. Container stop/status
-11. Container restart
-12. Container removal
-13. Docker image cleanup
+
+| Figure | Screenshot | Purpose |
+|---|---|---|
+| 0a | [`0-docker-verification.png`](Screenshots/0-docker-verification.png) | Docker installation and version verification |
+| 0b | [`0-docker-verification (1).png`](Screenshots/0-docker-verification%20%281%29.png) | Docker `hello-world` test container execution |
+| 1 | [`1-local-flask.png`](Screenshots/1-local-flask.png) | Local Flask application execution |
+| 2 | [`2-flask-healthy.png`](Screenshots/2-flask-healthy.png) | Local `/health` endpoint response |
+| 3 | [`3-docker-build.png`](Screenshots/3-docker-build.png) | Successful Docker image build (`flask-docker-app:v1`) |
+| 4 | [`4-docker-images.png`](Screenshots/4-docker-images.png) | Local `docker images` repository listing |
+| 5 | [`5-docker-run.png`](Screenshots/5-docker-run.png) | Running container in detached mode with port mapping (`5000:5000`) |
+| 6 | [`6-dockerized-running.png`](Screenshots/6-dockerized-running.png) | Dockerized application output in browser (`http://localhost:5000`) |
+| 7 | [`7-dockerized-health-check.png`](Screenshots/7-dockerized-health-check.png) | Dockerized `/health` endpoint verification (`http://localhost:5000/health`) |
+| 8 | [`8-docker-container-logs.png`](Screenshots/8-docker-container-logs.png) | Container runtime execution logs via `docker logs` |
+| 9 | [`9-applications-inside-docker.png`](Screenshots/9-applications-inside-docker.png) | Interactive container shell inspection (`pwd`, `ls`) |
+| 10 | [`10-stopping-and-checking-status-of-container.png`](Screenshots/10-stopping-and-checking-status-of-container.png) | Container stop and status check (`docker ps -a`) |
+| 11 | [`11-restart-docker-container.png`](Screenshots/11-restart-docker-container.png) | Container restart verification via `docker start` |
+| 12 | [`12-container-removed.png`](Screenshots/12-container-removed.png) | Container removal via `docker rm` |
+| 13 | [`13-docker-image-cleanup.png`](Screenshots/13-docker-image-cleanup.png) | Docker image cleanup via `docker rmi` |
 
 ## Submission
 **GitHub:** https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-4
