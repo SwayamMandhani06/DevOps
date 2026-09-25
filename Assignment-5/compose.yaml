@@ -1,0 +1,43 @@
+services:
+  web:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: assignment5-web
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/assignment5
+      MONGO_DB: assignment5
+      MONGO_COLLECTION: messages
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - assignment5-network
+
+  mongodb:
+    image: mongo:7
+    container_name: assignment5-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: assignment5
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - assignment5-network
+
+volumes:
+  mongodb-data:
+
+networks:
+  assignment5-network:
+    driver: bridge

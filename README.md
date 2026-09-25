@@ -38,10 +38,10 @@ This repository serves as a centralized portfolio for all DevOps practical cours
 | **Assignment 2** | AWS Cloud Computing Services & EC2 Practical Lifecycle | AWS EC2, S3, Lambda, RDS, ELB, ECS, CloudWatch, NGINX, Linux | **Completed** | [View Assignment 2](./Assignment-2/) |
 | **Assignment 3** | Infrastructure as Code (IaC) using Terraform for AWS EC2 Provisioning | Terraform, AWS EC2, Security Groups, NGINX, Ubuntu 24.04, AWS CLI | **Completed** | [View Assignment 3](./Assignment-3/) |
 | **Assignment 4** | Containerization with Docker — Create or Migrate an Application | Docker, Dockerfile, Container Lifecycle, Python 3.12, Flask | **Completed** | [View Assignment 4](./Assignment-4/) |
-| **Assignment 5** | Multi-Container Orchestration with Docker Compose | Docker Compose, Service Networking, Volumes | *Not yet completed* | *Scheduled* |
+| **Assignment 5** | Multi-Container Orchestration with Docker Compose | Docker Compose, Flask, MongoDB 7, Bridge Network, Named Volumes | **Completed** | [View Assignment 5](./Assignment-5/) |
 
 > [!NOTE]
-> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, and 4 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides. Subsequent curriculum assignments will be added as they are performed in the laboratory sessions.
+> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, 4, and 5 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides.
 
 ---
 
@@ -312,6 +312,124 @@ The complete end-to-end containerization workflow executed during the practical:
 
 ---
 
+
+---
+
+## Assignment 5 — Multi-Container Orchestration with Docker Compose
+
+### Objective
+To orchestrate and deploy a multi-container web application consisting of a Python Flask web API and a MongoDB NoSQL database using Docker Compose, establishing automated service dependencies, port forwarding, environment variable configuration, custom bridge networking, persistent volume storage, and health check monitoring.
+
+### Key Concepts / Technologies
+- **Multi-Container Orchestration**: Managing multi-tier application lifecycles declaratively through Docker Compose (`compose.yaml`).
+- **Compose Services**:
+  - `web`: Custom Flask microservice containerized using Python 3.12 and PyMongo, exposing port `5000`.
+  - `mongodb`: Official `mongo:7` database engine running as a persistent data store, exposing port `27017`.
+- **Service Dependency & Startup Ordering**: Utilizing `depends_on` with `condition: service_healthy` to guarantee that the Flask web application only initializes once the MongoDB daemon successfully responds to health ping checks.
+- **Port Mapping**:
+  - Web service: Host port `5000` mapped to container port `5000` (`5000:5000`).
+  - Database service: Host port `27017` mapped to container port `27017` (`27017:27017`).
+- **Environment Variables**: Decoupled database connection parameters (`MONGO_URI`, `MONGO_DB`, `MONGO_COLLECTION`, `MONGO_INITDB_DATABASE`).
+- **Custom Docker Bridge Network**: Isolated private bridge network (`assignment5-network`) providing internal DNS resolution between services (Flask accesses MongoDB via hostname `mongodb`).
+- **Named Persistent Volume Storage**: Docker named volume (`mongodb-data`) mounted to `/data/db` ensuring database records persist across container restarts and recreation.
+- **Service Health Check**: Automated container health check using `mongosh --quiet --eval "db.adminCommand('ping').ok"` (5s interval, 5s timeout, 10 retries) to verify database operational readiness.
+- **Application Endpoints**:
+  - `/`: JSON service metadata and available endpoint list.
+  - `/health`: Health status endpoint validating active Flask-to-MongoDB connectivity.
+  - `/data`: Inserts dynamic message documents and retrieves stored records from MongoDB.
+
+### Core Project Files
+The multi-container application is organized under [`Assignment-5/`](./Assignment-5/):
+- **[`compose.yaml`](./Assignment-5/compose.yaml)**: Docker Compose specification declaring `web` and `mongodb` services, environment variables, health check, `mongodb-data` volume, and `assignment5-network` bridge network.
+- **[`app/app.py`](./Assignment-5/app/app.py)**: Python Flask application implementing MongoDB client connection, error handling, health checking, and data insertion/retrieval routes.
+- **[`app/Dockerfile`](./Assignment-5/app/Dockerfile)**: Multi-layer build definition for the Flask service based on `python:3.12-slim`.
+- **[`app/requirements.txt`](./Assignment-5/app/requirements.txt)**: Runtime dependencies (`Flask`, `pymongo`).
+- **[`app/.dockerignore`](./Assignment-5/app/.dockerignore)**: Excludes caches, virtual environments, and git files from build context.
+- **[`README.md`](./Assignment-5/README.md)**: Detailed assignment guide with orchestration architecture, command reference, and verification steps.
+
+### Docker Compose Workflow & Implementation
+```text
+┌────────────────────────────────────────────────────────┐
+│                   docker compose up -d                 │
+└───────────────────────────┬────────────────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+┌───────────────────────────┐   ┌────────────────────────┐
+│      Network Creation     │   │     Volume Creation    │
+│   (assignment5-network)   │   │     (mongodb-data)     │
+└─────────────┬─────────────┘   └───────────┬────────────┘
+              │                             │
+              └──────────────┬──────────────┘
+                             ▼
+┌────────────────────────────────────────────────────────┐
+│                   mongodb Service                      │
+│ - Image: mongo:7                                       │
+│ - Port: 27017:27017                                    │
+│ - Volume: mongodb-data:/data/db                        │
+│ - Healthcheck: mongosh ping -> healthy                 │
+└───────────────────────────┬────────────────────────────┘
+                            │ depends_on: service_healthy
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                     web Service                        │
+│ - Build: ./app (Dockerfile)                            │
+│ - Port: 5000:5000                                      │
+│ - Connects via: mongodb://mongodb:27017/assignment5   │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                   Verify Endpoints                     │
+│ - http://localhost:5000        (Service Info)          │
+│ - http://localhost:5000/health (DB Connection Healthy) │
+│ - http://localhost:5000/data   (Insert & Query Data)   │
+└────────────────────────────────────────────────────────┘
+```
+
+1. **Validation & Image Build**:
+   ```powershell
+   docker compose config   # Validate compose specification
+   docker compose build    # Build web service container image
+   ```
+2. **Multi-Container Deployment**:
+   ```powershell
+   docker compose up -d    # Launch services in detached mode
+   docker compose ps       # Verify healthy status of services
+   ```
+3. **Endpoint Verification**:
+   - Access `http://localhost:5000` to confirm web service operation.
+   - Access `http://localhost:5000/health` to confirm active database connection (`"database_service": "connected"`).
+   - Access `http://localhost:5000/data` to insert records and verify real-time document queries.
+4. **Network & Volume Inspection**:
+   ```powershell
+   docker network inspect assignment-5_assignment5-network
+   docker volume inspect assignment-5_mongodb-data
+   docker compose logs --tail=50
+   ```
+5. **Data Persistence Verification**:
+   - Restart the database container:
+     ```powershell
+     docker compose restart mongodb
+     ```
+   - Query stored records using `mongosh`:
+     ```powershell
+     docker compose exec mongodb mongosh --eval "use assignment5; db.messages.find().pretty()"
+     ```
+   - Verified that previously inserted documents remain intact due to the named persistent volume.
+6. **Teardown & Cleanup**:
+   ```powershell
+   docker compose down     # Stop and remove containers and network (retains volume)
+   docker compose down -v  # Optional: remove containers, network, and persistent volume
+   ```
+
+### Status
+**Completed**
+
+### Documentation
+- Folder: [Assignment-5/](./Assignment-5/)
+- GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-5](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-5)
+
 # Technologies Used
 
 ### Cloud Computing Platform
@@ -331,11 +449,13 @@ The complete end-to-end containerization workflow executed during the practical:
 
 ### Containers & Virtualization
 - **Docker Engine & Docker Desktop** (Container runtime, daemon, and image management)
+- **Docker Compose** (Declarative multi-container application specification and orchestration)
 - **Dockerfile** (Declarative container build specifications)
 - **Docker CLI** (Image building, container execution, inspection, lifecycle, and teardown)
 
 ### Web & Application Servers / Frameworks
 - **Flask** (Python lightweight web framework and REST service)
+- **MongoDB 7** (NoSQL document database, PyMongo client driver)
 - **NGINX** (HTTP Web Server & Reverse Proxy)
 
 ### Operating Systems, Tools & Shell
@@ -347,8 +467,9 @@ The complete end-to-end containerization workflow executed during the practical:
 - **EC2 Instance Connect & SSH** (Secure remote shell access)
 
 ### Languages & Configuration Formats
-- **Python 3.12** (Flask web service, AWS Lambda handler)
+- **Python 3.12** (Flask web service, PyMongo integration, AWS Lambda handler)
 - **HashiCorp Configuration Language (HCL)** (Terraform configuration)
+- **Docker Compose YAML Specification** (Multi-service deployment configuration)
 - **Dockerfile Syntax** (Container image build instructions)
 
 ---
@@ -403,30 +524,38 @@ DevOps/
 │       ├── main.tf
 │       ├── outputs.tf
 │       └── .gitignore
-└── Assignment-4/                                # Assignment 04: Create or Migrate an Application to Docker
-    ├── README.md                                # Detailed Assignment 4 containerization guide
-    ├── app.py                                   # Python Flask web application (ports & health routes)
-    ├── requirements.txt                         # Application runtime dependencies (Flask)
-    ├── Dockerfile                               # Container build instructions (python:3.12-slim)
-    ├── .dockerignore                            # Build context ignore rules
-    ├── Report/                                  # Academic submission report
-    │   └── 123B1B184_Assignment_4_DevOps.pdf
-    └── Screenshots/                             # Practical output verification screenshots (15 figures)
-        ├── 0-docker-verification (1).png
-        ├── 0-docker-verification.png
-        ├── 1-local-flask.png
-        ├── 2-flask-healthy.png
-        ├── 3-docker-build.png
-        ├── 4-docker-images.png
-        ├── 5-docker-run.png
-        ├── 6-dockerized-running.png
-        ├── 7-dockerized-health-check.png
-        ├── 8-docker-container-logs.png
-        ├── 9-applications-inside-docker.png
-        ├── 10-stopping-and-checking-status-of-container.png
-        ├── 11-restart-docker-container.png
-        ├── 12-container-removed.png
-        └── 13-docker-image-cleanup.png
+├── Assignment-4/                                # Assignment 04: Create or Migrate an Application to Docker
+│   ├── README.md                                # Detailed Assignment 4 containerization guide
+│   ├── app.py                                   # Python Flask web application (ports & health routes)
+│   ├── requirements.txt                         # Application runtime dependencies (Flask)
+│   ├── Dockerfile                               # Container build instructions (python:3.12-slim)
+│   ├── .dockerignore                            # Build context ignore rules
+│   ├── Report/                                  # Academic submission report
+│   │   └── 123B1B184_Assignment_4_DevOps.pdf
+│   └── Screenshots/                             # Practical output verification screenshots (15 figures)
+│       ├── 0-docker-verification (1).png
+│       ├── 0-docker-verification.png
+│       ├── 1-local-flask.png
+│       ├── 2-flask-healthy.png
+│       ├── 3-docker-build.png
+│       ├── 4-docker-images.png
+│       ├── 5-docker-run.png
+│       ├── 6-dockerized-running.png
+│       ├── 7-dockerized-health-check.png
+│       ├── 8-docker-container-logs.png
+│       ├── 9-applications-inside-docker.png
+│       ├── 10-stopping-and-checking-status-of-container.png
+│       ├── 11-restart-docker-container.png
+│       ├── 12-container-removed.png
+│       └── 13-docker-image-cleanup.png
+└── Assignment-5/                                # Assignment 05: Multi-Container Orchestration with Docker Compose
+    ├── README.md                                # Detailed Assignment 5 orchestration guide
+    ├── compose.yaml                             # Docker Compose multi-service definition
+    └── app/                                     # Flask application source directory
+        ├── app.py                               # Flask web service with MongoDB integration
+        ├── requirements.txt                     # Dependencies (Flask, pymongo)
+        ├── Dockerfile                           # Container build instructions
+        └── .dockerignore                        # Build context exclusions
 ```
 
 ---
