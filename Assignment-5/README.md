@@ -1,5 +1,20 @@
 # DevOps Assignment 5 — Docker Compose
 
+## Student Details
+- **Name:** Swayam Mandhani
+- **PRN / Roll No.:** 123B1B184
+- **Class:** B.Tech Computer Engineering
+- **Division / Batch:** C / C2
+- **Subject:** DevOps (BCE27PE01)
+- **Assignment:** 5
+- **Report Document:** [123B1B184_Assignment_5_DevOps.pdf](Report/123B1B184_Assignment_5_DevOps.pdf)
+
+## Title
+**Multi-Container Orchestration with Docker Compose**
+
+## Aim
+To orchestrate and deploy a multi-container web application consisting of a Python Flask web API and a MongoDB NoSQL database using Docker Compose, establishing automated service dependencies, port forwarding, environment variable configuration, custom bridge networking, persistent volume storage, and health check monitoring.
+
 ## Overview
 A multi-container application built with Docker Compose consisting of a Flask web application and MongoDB database.
 
@@ -28,15 +43,31 @@ Assignment-5/
 │   ├── Dockerfile
 │   └── .dockerignore
 ├── compose.yaml
-└── README.md
+├── README.md
+├── Report/
+│   └── 123B1B184_Assignment_5_DevOps.pdf
+└── Screenshots/
+    ├── 1-docker-compose-configuration-validation.png
+    ├── 2-docker-compose-build.png
+    ├── 3-multi-container-application.png
+    ├── 4-flask-web-application.png
+    ├── 5-application health.png
+    ├── 6-flask-mongodb-communication.png
+    ├── 7-docker-compose-logs.png
+    ├── 8-docker-compose-network (1).png
+    ├── 8-docker-compose-network (2).png
+    ├── 9-mongodb-persistent-volume.png
+    ├── 10-mongodb-stored-data.png
+    ├── 11-volume-persistence-verification.png
+    └── 12-docker-shutdown.png
 ```
 
 ## Services
 
 | Service | Image / Build | Port | Purpose |
 |---|---|---:|---|
-| web | Flask app | 5000 | Web/API service |
-| mongodb | mongo:7 | 27017 | Database service |
+| web | Flask app (`./app`) | 5000:5000 | Web/API service |
+| mongodb | mongo:7 | 27017:27017 | Database service |
 
 ## Environment Variables
 
@@ -170,7 +201,26 @@ docker compose down -v
 
 The Flask and MongoDB services were successfully orchestrated using Docker Compose. Service configuration, ports, environment variables, networking, persistent storage, health checks, database communication, and container lifecycle operations were successfully demonstrated.
 
-## Repository
+## Screenshot Evidence
 
-https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-5
+| Figure | Screenshot | Purpose |
+|---|---|---|
+| 1 | [`1-docker-compose-configuration-validation.png`](Screenshots/1-docker-compose-configuration-validation.png) | Docker Compose specification validation via `docker compose config` |
+| 2 | [`2-docker-compose-build.png`](Screenshots/2-docker-compose-build.png) | Web service container image build via `docker compose build` |
+| 3 | [`3-multi-container-application.png`](Screenshots/3-multi-container-application.png) | Multi-container application execution and container status (`docker compose up -d` & `ps`) |
+| 4 | [`4-flask-web-application.png`](Screenshots/4-flask-web-application.png) | Flask web application home endpoint response (`http://localhost:5000`) |
+| 5 | [`5-application health.png`](Screenshots/5-application%20health.png) | Application and MongoDB connectivity health check (`http://localhost:5000/health`) |
+| 6 | [`6-flask-mongodb-communication.png`](Screenshots/6-flask-mongodb-communication.png) | Document insertion and retrieval endpoint (`http://localhost:5000/data`) |
+| 7 | [`7-docker-compose-logs.png`](Screenshots/7-docker-compose-logs.png) | Multi-container runtime logs inspection via `docker compose logs` |
+| 8a | [`8-docker-compose-network (1).png`](Screenshots/8-docker-compose-network%20%281%29.png) | Docker network listing (`docker network ls`) showing custom network |
+| 8b | [`8-docker-compose-network (2).png`](Screenshots/8-docker-compose-network%20%282%29.png) | Docker network inspection (`docker network inspect assignment-5_assignment5-network`) |
+| 9 | [`9-mongodb-persistent-volume.png`](Screenshots/9-mongodb-persistent-volume.png) | Persistent volume inspection (`docker volume inspect assignment-5_mongodb-data`) |
+| 10 | [`10-mongodb-stored-data.png`](Screenshots/10-mongodb-stored-data.png) | Stored document records verified inside MongoDB shell (`mongosh`) |
+| 11 | [`11-volume-persistence-verification.png`](Screenshots/11-volume-persistence-verification.png) | Volume persistence verification across MongoDB container restart |
+| 12 | [`12-docker-shutdown.png`](Screenshots/12-docker-shutdown.png) | Graceful application shutdown via `docker compose down` |
 
+## Submission
+
+**GitHub:** https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-5
+
+**Hosted / Output:** N/A — Multi-container application executed locally.

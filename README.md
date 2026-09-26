@@ -423,6 +423,23 @@ The multi-container application is organized under [`Assignment-5/`](./Assignmen
    docker compose down -v  # Optional: remove containers, network, and persistent volume
    ```
 
+### Output / Evidence
+- **Screenshots**: 13 comprehensive output verification screenshots located in [Assignment-5/Screenshots/](./Assignment-5/Screenshots/)
+- **Academic Report**: Comprehensive PDF report available at [Assignment-5/Report/123B1B184_Assignment_5_DevOps.pdf](./Assignment-5/Report/123B1B184_Assignment_5_DevOps.pdf)
+- **Practical Verification Milestones**: Verified through 12 key execution milestones:
+  1. Compose specification validation via `docker compose config`
+  2. Web service image build via `docker compose build`
+  3. Multi-container deployment and healthy status via `docker compose up -d` & `docker compose ps`
+  4. Web service endpoint verification (`http://localhost:5000`)
+  5. Database connection health check verification (`http://localhost:5000/health`)
+  6. Dynamic MongoDB document insertion and querying (`http://localhost:5000/data`)
+  7. Multi-container runtime logs inspection via `docker compose logs`
+  8. Custom Compose network listing and inspection (`assignment-5_assignment5-network`)
+  9. Persistent volume listing and inspection (`assignment-5_mongodb-data`)
+  10. Direct MongoDB shell verification via `mongosh`
+  11. Database container restart and volume persistence verification (`docker compose restart mongodb`)
+  12. Clean environment teardown via `docker compose down`
+
 ### Status
 **Completed**
 
@@ -551,11 +568,27 @@ DevOps/
 └── Assignment-5/                                # Assignment 05: Multi-Container Orchestration with Docker Compose
     ├── README.md                                # Detailed Assignment 5 orchestration guide
     ├── compose.yaml                             # Docker Compose multi-service definition
-    └── app/                                     # Flask application source directory
-        ├── app.py                               # Flask web service with MongoDB integration
-        ├── requirements.txt                     # Dependencies (Flask, pymongo)
-        ├── Dockerfile                           # Container build instructions
-        └── .dockerignore                        # Build context exclusions
+    ├── app/                                     # Flask application source directory
+    │   ├── app.py                               # Flask web service with MongoDB integration
+    │   ├── requirements.txt                     # Dependencies (Flask, pymongo)
+    │   ├── Dockerfile                           # Container build instructions
+    │   └── .dockerignore                        # Build context exclusions
+    ├── Report/                                  # Academic submission report
+    │   └── 123B1B184_Assignment_5_DevOps.pdf
+    └── Screenshots/                             # Practical output verification screenshots (13 figures)
+        ├── 1-docker-compose-configuration-validation.png
+        ├── 2-docker-compose-build.png
+        ├── 3-multi-container-application.png
+        ├── 4-flask-web-application.png
+        ├── 5-application health.png
+        ├── 6-flask-mongodb-communication.png
+        ├── 7-docker-compose-logs.png
+        ├── 8-docker-compose-network (1).png
+        ├── 8-docker-compose-network (2).png
+        ├── 9-mongodb-persistent-volume.png
+        ├── 10-mongodb-stored-data.png
+        ├── 11-volume-persistence-verification.png
+        └── 12-docker-shutdown.png
 ```
 
 ---
