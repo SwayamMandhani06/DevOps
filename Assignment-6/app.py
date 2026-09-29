@@ -1,6 +1,6 @@
 print("========================================")
 print(" Jenkins + GitHub CI/CD Demo")
 print("========================================")
-print("Source code successfully retrieved from GitHub.")
-print("Build executed successfully by Jenkins.")
+print("Updated source code successfully retrieved from GitHub.")
+print("Jenkins executed the latest version from the main branch.")
 print("Assignment 6 - DevOps")
