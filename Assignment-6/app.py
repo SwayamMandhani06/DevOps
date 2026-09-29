@@ -1,0 +1,6 @@
+print("========================================")
+print(" Jenkins + GitHub CI/CD Demo")
+print("========================================")
+print("Source code successfully retrieved from GitHub.")
+print("Build executed successfully by Jenkins.")
+print("Assignment 6 - DevOps")
