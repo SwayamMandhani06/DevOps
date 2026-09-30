@@ -70,3 +70,7 @@ kubeconfig*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Ansible Artifacts
+*.retry
+.vault-password

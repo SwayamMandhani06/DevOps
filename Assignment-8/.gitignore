@@ -1,0 +1,20 @@
+# Ansible artifacts
+*.retry
+*.log
+.vault-password
+
+# Kubernetes local configs & secrets
+*.kubeconfig
+kubeconfig*
+.kube/
+
+# Temporary files & OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+
+# IDE & Editor settings
+.vscode/
+.idea/

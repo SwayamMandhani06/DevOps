@@ -41,9 +41,10 @@ This repository serves as a centralized portfolio for all DevOps practical cours
 | **Assignment 5** | Multi-Container Orchestration with Docker Compose | Docker Compose, Flask, MongoDB 7, Bridge Network, Named Volumes | **Completed** | [View Assignment 5](./Assignment-5/) |
 | **Assignment 6** | Continuous Integration with Jenkins & GitHub | Jenkins, GitHub SCM, Freestyle Project, Declarative Pipeline, SCM Polling, Python 3.12 | **Completed** | [View Assignment 6](./Assignment-6/) |
 | **Assignment 7** | Kubernetes Architecture & Package Management with Helm | Kubernetes, Helm 3, Docker Desktop K8s, NGINX, Pods, Deployments, NodePort Service | **Completed** | [View Assignment 7](./Assignment-7/) |
+| **Assignment 8** | Kubernetes Objects, Services and Ansible | Kubernetes, Ansible, WSL2 Ubuntu, Docker Desktop, NGINX, PV/PVC, ConfigMap, Secret | **Completed** | [View Assignment 8](./Assignment-8/) |
 
 > [!NOTE]
-> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, 4, 5, 6, and 7 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides.
+> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, 4, 5, 6, 7, and 8 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides.
 
 ---
 
@@ -771,6 +772,141 @@ The Kubernetes and Helm implementation is organized under [`Assignment-7/`](./As
 - Folder: [Assignment-7/](./Assignment-7/)
 - GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-7](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-7)
 
+
+---
+
+## Assignment 8 — Kubernetes Objects, Services and Ansible
+
+### Objective
+To explore declarative Kubernetes workload orchestration and automated configuration management using Ansible, configuring workload primitives (Pods, Deployments, Namespaces), all four Service types (ClusterIP, NodePort, LoadBalancer, ExternalName), decoupled configuration and credentials (ConfigMap, Secret), and persistent storage (PV/PVC) in local Docker Desktop Kubernetes; and establishing an agentless Ansible automation pipeline via WSL2 Ubuntu to provision and configure NGINX on SSH-managed Ubuntu Docker nodes with verified idempotency.
+
+### Key Concepts / Technologies
+- **Local Kubernetes Workloads (Docker Desktop)**:
+  - Single-node cluster (`desktop-control-plane`) running under context `docker-desktop`.
+  - Isolated resource environment configured in namespace `assignment8`.
+- **Kubernetes Workload & Service Primitives**:
+  - **Standalone Pod**: Atomic container workload running `nginx:latest` ([`kubernetes/pod.yaml`](./Assignment-8/kubernetes/pod.yaml)).
+  - **Declarative Deployment**: Self-healing 3-replica NGINX deployment ensuring high availability ([`kubernetes/deployment.yaml`](./Assignment-8/kubernetes/deployment.yaml)).
+  - **Service Types Comparison**:
+    - `NodePort`: Exposes NGINX externally on port `80:31678/TCP` ([`kubernetes/nodeport-service.yaml`](./Assignment-8/kubernetes/nodeport-service.yaml)).
+    - `ClusterIP`: Cluster-internal IP communication for microservices ([`kubernetes/service-types.yaml`](./Assignment-8/kubernetes/service-types.yaml)).
+    - `LoadBalancer`: Ingress/external traffic balancing ([`kubernetes/service-types.yaml`](./Assignment-8/kubernetes/service-types.yaml)).
+    - `ExternalName`: DNS CNAME aliasing mapping internal services to external endpoints (`example.com`).
+- **Configuration & Secret Decoupling**:
+  - `ConfigMap`: Injects application environment variables (`APP_ENV`, `APP_NAME`) ([`kubernetes/configmap.yaml`](./Assignment-8/kubernetes/configmap.yaml)).
+  - `Secret`: Injects sensitive database credentials using `Opaque` base64 encoding ([`kubernetes/secret.yaml`](./Assignment-8/kubernetes/secret.yaml)).
+- **Stateful Persistent Storage**:
+  - `PersistentVolume` (`assignment8-pv`, 1Gi, `ReadWriteOnce`, `Retain`) and `PersistentVolumeClaim` (`assignment8-pvc`) bound to preserve state across pod restarts ([`kubernetes/pv-pvc.yaml`](./Assignment-8/kubernetes/pv-pvc.yaml)).
+- **Ansible Configuration Management**:
+  - **Control Node**: WSL2 Ubuntu 24.04 LTS executing Ansible Core v2.20.1 over OpenSSH.
+  - **Managed Nodes**: Two containerized Ubuntu 24.04 nodes (`Server-1` on port 2221, `Server-2` on port 2222) built via [`ansible/Dockerfile`](./Assignment-8/ansible/Dockerfile).
+  - **Inventory**: INI specification grouping hosts under `[webservers]` with non-privileged connection variables ([`ansible/inventory.ini`](./Assignment-8/ansible/inventory.ini)).
+  - **Automated Playbook**: Multi-task declarative playbook ([`ansible/install-nginx.yml`](./Assignment-8/ansible/install-nginx.yml)) automating package updates, NGINX/curl installation, service enablement, and custom `index.html` deployment.
+  - **Idempotency Verification**: Successive playbook execution producing `changed=0, ok=4`, confirming zero unwarranted drift.
+
+### Core Project Files
+The Kubernetes manifests and Ansible automation configurations are organized under [`Assignment-8/`](./Assignment-8/):
+- **[`kubernetes/`](./Assignment-8/kubernetes/)**: Declarative manifests for namespace, pod, deployment, 4 service types, configmap, secret, and pv/pvc.
+- **[`ansible/Dockerfile`](./Assignment-8/ansible/Dockerfile)**: Managed-node container image recipe with SSH and sudo configuration.
+- **[`ansible/inventory.ini`](./Assignment-8/ansible/inventory.ini)**: Host inventory declaring `server-1` (port 2221) and `server-2` (port 2222).
+- **[`ansible/install-nginx.yml`](./Assignment-8/ansible/install-nginx.yml)**: Idempotent Ansible playbook for NGINX deployment.
+- **[`ansible/README.md`](./Assignment-8/ansible/README.md)**: Concise case study documentation for the Ansible configuration workflow.
+- **[`README.md`](./Assignment-8/README.md)**: Detailed assignment guide covering both Kubernetes and Ansible procedures, commands, and evidence.
+
+### Architecture & Workflows
+```text
+┌────────────────────────────────────────────────────────┐
+│             Part A: Kubernetes Architecture            │
+│  Namespace: assignment8 (Docker Desktop Control Plane) │
+│  - Workloads: Pod (nginx-pod) & Deployment (3 replicas)│
+│  - Services: NodePort (:31678), ClusterIP, LB, ExtName │
+│  - Config & Data: ConfigMap, Secret, Bound PV/PVC (1Gi)│
+└────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│         Part B: Ansible Configuration Management       │
+│  Control Node: WSL2 Ubuntu 24.04 (Ansible Core v2.20.1)│
+│                            │                           │
+│              SSH over localhost port forwarding        │
+│              ┌─────────────┴─────────────┐             │
+│              ▼                           ▼             │
+│   Server-1 (Port: 2221)       Server-2 (Port: 2222)    │
+│   - Ubuntu 24.04 Container    - Ubuntu 24.04 Container │
+│   - NGINX Installed           - NGINX Installed        │
+│   - Custom index.html         - Custom index.html      │
+│   - Idempotent: changed=0     - Idempotent: changed=0  │
+└────────────────────────────────────────────────────────┘
+```
+
+1. **Kubernetes Workload Execution & Verification**:
+   ```powershell
+   cd "Assignment-8\kubernetes"
+   kubectl apply -f namespace.yaml
+   kubectl apply -f pod.yaml
+   kubectl apply -f deployment.yaml
+   kubectl apply -f nodeport-service.yaml
+   kubectl apply -f configmap.yaml
+   kubectl apply -f secret.yaml
+   kubectl apply -f pv-pvc.yaml
+   kubectl apply -f service-types.yaml
+   kubectl get all -n assignment8
+   ```
+2. **Ansible Managed Node Setup & Connectivity**:
+   ```powershell
+   cd "Assignment-8\ansible"
+   docker build -t assignment8-ansible-node .
+   docker run -d --name assignment8-server1 -p 127.0.0.1:2221:22 assignment8-ansible-node
+   docker run -d --name assignment8-server2 -p 127.0.0.1:2222:22 assignment8-ansible-node
+   ```
+3. **Ansible Playbook Execution & Idempotency Testing**:
+   ```bash
+   ansible all -i inventory.ini -m ping -k
+   ansible-playbook -i inventory.ini install-nginx.yml --syntax-check
+   ansible-playbook -i inventory.ini install-nginx.yml -k   # Initial run: changed=2
+   ansible server-1 -i inventory.ini -m shell -a "curl -s http://localhost" -k
+   ansible webservers -i inventory.ini -m shell -a "pgrep -a nginx" -k
+   ansible-playbook -i inventory.ini install-nginx.yml -k   # Idempotency: changed=0
+   ```
+
+### Output / Evidence
+- **Screenshots**: 21 comprehensive output verification screenshots located in [Assignment-8/Screenshots/](./Assignment-8/Screenshots/)
+- **Academic Report**: Comprehensive PDF report available at [Assignment-8/Report/123B1B184_Assignment_8_DevOps.pdf](./Assignment-8/Report/123B1B184_Assignment_8_DevOps.pdf)
+- **Practical Verification Milestones**: Verified through 21 key milestones across Kubernetes and Ansible:
+  1. Docker Desktop Kubernetes cluster context and node readiness (`1-kubernetes-cluster-verification.png`)
+  2. Isolated `assignment8` namespace creation (`2-namespace-created.png`)
+  3. Standalone `nginx-pod` deployment and node binding (`3-pod-created.png`)
+  4. 3-replica NGINX deployment provisioning (`4-deployment-created.png`)
+  5. NodePort service creation mapping port `31678` (`5-nodeport-service.png`)
+  6. Web browser verification of live NGINX server output (`6-nginx-service-verification.png`)
+  7. ConfigMap `app-config` creation and environment data inspection (`7-configmap-created.png`)
+  8. Opaque Secret `db-secret` creation (`8-secret-created.png`)
+  9. PersistentVolume and PVC creation and Bound status (`9-persistent-volume-and-claim.png`)
+  10. Verification of ClusterIP, NodePort, LoadBalancer, and ExternalName services (`10-kubernetes-service-types.png`)
+  11. WSL2 Ubuntu control node environment verification (`11-ansible-control-node.png`)
+  12. Ansible Core version and tool verification (`12-ansible-version.png`)
+  13. Containerized managed nodes execution via Docker (`13-ansible-managed-servers.png`)
+  14. Inventory hierarchy verification via `ansible-inventory --graph` (`14-ansible-inventory.png`)
+  15. SSH ping connectivity success (`ping => pong`) (`15-ansible-ping-success.png`)
+  16. Playbook syntax check verification (`16-ansible-playbook-syntax-check.png`)
+  17. Automated NGINX playbook execution completing all tasks (`17-ansible-playbook-success.png`)
+  18. Deployed web page content verification via ad-hoc curl (`18-nginx-ansible-verification.png`)
+  19. Active NGINX process verification across nodes (`19-nginx-process-verification.png`)
+  20. Playbook idempotency verification confirming `changed=0` (`20-ansible-idempotency.png`)
+  21. Combined end-to-end DevOps pipeline workflow architecture (`21-combined-devops-workflow.png`)
+
+### Outcome
+Successfully orchestrated containerized workloads with declarative Pod and Deployment primitives, decoupled environment configurations via ConfigMaps and Secrets, bound persistent host storage using PV/PVC, and exposed workloads across all four Kubernetes Service types within an isolated namespace on Docker Desktop. Furthermore, established an agentless Ansible automation pipeline from a WSL2 Ubuntu control node across SSH-managed container nodes, achieving automated NGINX deployment, custom web content delivery, and guaranteed zero-drift state idempotency.
+
+### Status
+**Completed**
+
+### Documentation
+- Folder: [Assignment-8/](./Assignment-8/)
+- GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-8](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-8)
+
+---
+
 # Technologies Used
 
 ### Cloud Computing Platform
@@ -788,7 +924,8 @@ The Kubernetes and Helm implementation is organized under [`Assignment-7/`](./As
 ### Infrastructure as Code (IaC)
 - **HashiCorp Terraform** (Core CLI v1.5+, AWS Provider `~> 6.0`, State Management, Lifecycle Automation)
 
-### CI/CD & Automation
+### CI/CD & Configuration Management
+- **Ansible Core** (v2.20.1 agentless configuration management, inventory management, ad-hoc modules, idempotent playbooks)
 - **Jenkins** (Continuous Integration automation server v2.568.3, Freestyle jobs, Declarative Pipelines, SCM polling, workspace management)
 - **GitHub SCM Integration** (Remote Git repository integration, branch tracking, automated checkout)
 - **Jenkinsfile** (Pipeline as Code declarative specification)
@@ -807,6 +944,7 @@ The Kubernetes and Helm implementation is organized under [`Assignment-7/`](./As
 - **NGINX** (HTTP Web Server & Reverse Proxy)
 
 ### Operating Systems, Tools & Shell
+- **WSL2 (Windows Subsystem for Linux)** (Ubuntu 24.04 LTS Ansible control node environment)
 - **Amazon Linux 2023** (Kernel 6.18, x86_64)
 - **Ubuntu 24.04 LTS** (Noble Numbat, x86_64)
 - **Debian / Python Slim** (`python:3.12-slim` container base image)
@@ -817,6 +955,8 @@ The Kubernetes and Helm implementation is organized under [`Assignment-7/`](./As
 ### Languages & Configuration Formats
 - **Python 3.12** (Flask web service, PyMongo integration, AWS Lambda handler, CI demo script)
 - **HashiCorp Configuration Language (HCL)** (Terraform configuration)
+- **Ansible Playbook YAML Syntax** (Declarative configuration management tasks and service automation)
+- **Kubernetes Manifest YAML** (Declarative specifications for workloads, services, and storage)
 - **Docker Compose YAML Specification** (Multi-service deployment configuration)
 - **Helm & Go Template Syntax** (Kubernetes manifest parameterization in templates and values.yaml)
 - **Jenkins Declarative Pipeline Groovy Syntax** (Pipeline as Code definition in Jenkinsfile)
@@ -946,44 +1086,86 @@ DevOps/
 │       ├── 11-jenkins-pipeline-configuration.png
 │       ├── 12-jenkins-pipeline-build.png
 │       └── 13-jenkins-pipeline-console-output.png
-└── Assignment-7/                                # Assignment 07: Kubernetes Architecture and Helm Package Manager
-    ├── README.md                                # Detailed Assignment 7 Kubernetes & Helm guide
-    ├── .gitignore                               # Helm and Kubernetes ignore rules
+├── Assignment-7/                                # Assignment 07: Kubernetes Architecture and Helm Package Manager
+│   ├── README.md                                # Detailed Assignment 7 Kubernetes & Helm guide
+│   ├── .gitignore                               # Helm and Kubernetes ignore rules
+│   ├── Report/                                  # Academic submission report
+│   │   └── 123B1B184_Assignment_7_DevOps.pdf
+│   ├── Screenshots/                             # Practical output verification screenshots (16 figures)
+│   │   ├── 1-kubernetes-tools-verification.png
+│   │   ├── 2-kubernetes-cluster-info.png
+│   │   ├── 3-kubernetes-nodes.png
+│   │   ├── 4-kubernetes-architecture.png
+│   │   ├── 5-helm-version.png
+│   │   ├── 6-helm-chart-created.png
+│   │   ├── 7-helm-chart-structure.png
+│   │   ├── 8-helm-template-output.png
+│   │   ├── 9-helm-install-success.png
+│   │   ├── 10-kubernetes-pods-deployments-services.png
+│   │   ├── 11-helm-list-and-status.png
+│   │   ├── 12-kubernetes-port-forward-configuration.png
+│   │   ├── 13-kubernetes-application-running.png
+│   │   ├── 14-helm-upgrade.png
+│   │   ├── 15-kubernetes-upgrade-verification.png
+│   │   └── 16-helm-uninstall.png
+│   └── myapp/                                   # Custom Helm Chart package
+│       ├── .helmignore                          # Helm package ignore rules
+│       ├── Chart.yaml                           # Chart metadata and semantic versioning
+│       ├── values.yaml                          # Configurable deployment values (replicas, image, service)
+│       ├── charts/                              # Dependent chart packages
+│       └── templates/                           # Kubernetes resource templates
+│           ├── NOTES.txt                        # Post-installation instructions
+│           ├── _helpers.tpl                     # Reusable template definitions
+│           ├── deployment.yaml                  # Kubernetes Deployment template
+│           ├── hpa.yaml                         # Horizontal Pod Autoscaler template
+│           ├── httproute.yaml                   # Gateway API HTTPRoute template
+│           ├── ingress.yaml                     # Ingress controller template
+│           ├── service.yaml                     # Kubernetes Service template
+│           ├── serviceaccount.yaml              # Kubernetes ServiceAccount template
+│           └── tests/                           # Helm chart test suite
+│               └── test-connection.yaml
+└── Assignment-8/                                # Assignment 08: Kubernetes Objects, Services and Ansible
+    ├── .gitignore                               # Ignore rules for Ansible & Kubernetes artifacts
+    ├── README.md                                # Detailed Assignment 8 guide
     ├── Report/                                  # Academic submission report
-    │   └── 123B1B184_Assignment_7_DevOps.pdf
-    ├── Screenshots/                             # Practical output verification screenshots (16 figures)
-    │   ├── 1-kubernetes-tools-verification.png
-    │   ├── 2-kubernetes-cluster-info.png
-    │   ├── 3-kubernetes-nodes.png
-    │   ├── 4-kubernetes-architecture.png
-    │   ├── 5-helm-version.png
-    │   ├── 6-helm-chart-created.png
-    │   ├── 7-helm-chart-structure.png
-    │   ├── 8-helm-template-output.png
-    │   ├── 9-helm-install-success.png
-    │   ├── 10-kubernetes-pods-deployments-services.png
-    │   ├── 11-helm-list-and-status.png
-    │   ├── 12-kubernetes-port-forward-configuration.png
-    │   ├── 13-kubernetes-application-running.png
-    │   ├── 14-helm-upgrade.png
-    │   ├── 15-kubernetes-upgrade-verification.png
-    │   └── 16-helm-uninstall.png
-    └── myapp/                                   # Custom Helm Chart package
-        ├── .helmignore                          # Helm package ignore rules
-        ├── Chart.yaml                           # Chart metadata and semantic versioning
-        ├── values.yaml                          # Configurable deployment values (replicas, image, service)
-        ├── charts/                              # Dependent chart packages
-        └── templates/                           # Kubernetes resource templates
-            ├── NOTES.txt                        # Post-installation instructions
-            ├── _helpers.tpl                     # Reusable template definitions
-            ├── deployment.yaml                  # Kubernetes Deployment template
-            ├── hpa.yaml                         # Horizontal Pod Autoscaler template
-            ├── httproute.yaml                   # Gateway API HTTPRoute template
-            ├── ingress.yaml                     # Ingress controller template
-            ├── service.yaml                     # Kubernetes Service template
-            ├── serviceaccount.yaml              # Kubernetes ServiceAccount template
-            └── tests/                           # Helm chart test suite
-                └── test-connection.yaml
+    │   └── 123B1B184_Assignment_8_DevOps.pdf
+    ├── Screenshots/                             # Practical output verification screenshots (21 figures)
+    │   ├── 1-kubernetes-cluster-verification.png
+    │   ├── 2-namespace-created.png
+    │   ├── 3-pod-created.png
+    │   ├── 4-deployment-created.png
+    │   ├── 5-nodeport-service.png
+    │   ├── 6-nginx-service-verification.png
+    │   ├── 7-configmap-created.png
+    │   ├── 8-secret-created.png
+    │   ├── 9-persistent-volume-and-claim.png
+    │   ├── 10-kubernetes-service-types.png
+    │   ├── 11-ansible-control-node.png
+    │   ├── 12-ansible-version.png
+    │   ├── 13-ansible-managed-servers.png
+    │   ├── 14-ansible-inventory.png
+    │   ├── 15-ansible-ping-success.png
+    │   ├── 16-ansible-playbook-syntax-check.png
+    │   ├── 17-ansible-playbook-success.png
+    │   ├── 18-nginx-ansible-verification.png
+    │   ├── 19-nginx-process-verification.png
+    │   ├── 20-ansible-idempotency.png
+    │   └── 21-combined-devops-workflow.png
+    ├── ansible/                                 # Ansible Configuration Management Case Study
+    │   ├── .gitignore                           # Ansible ignore rules
+    │   ├── Dockerfile                           # Ubuntu managed node container recipe
+    │   ├── README.md                            # Ansible case study documentation
+    │   ├── install-nginx.yml                    # Automated NGINX playbook
+    │   └── inventory.ini                        # Managed node inventory
+    └── kubernetes/                              # Declarative Kubernetes Manifests
+        ├── configmap.yaml                       # Application configuration
+        ├── deployment.yaml                      # 3-replica NGINX deployment
+        ├── namespace.yaml                       # Namespace definition (assignment8)
+        ├── nodeport-service.yaml                # NodePort service manifest
+        ├── pod.yaml                             # Standalone Pod manifest
+        ├── pv-pvc.yaml                          # PersistentVolume and PersistentVolumeClaim
+        ├── secret.yaml                          # Sensitive credential data
+        └── service-types.yaml                   # ClusterIP, LoadBalancer, ExternalName
 ```
 
 ---

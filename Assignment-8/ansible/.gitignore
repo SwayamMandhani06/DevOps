@@ -1,0 +1,6 @@
+*.log
+*.retry
+*.key
+*.pem
+.env
+.vault-password

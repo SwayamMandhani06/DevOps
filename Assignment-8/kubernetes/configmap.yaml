@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: assignment8
+data:
+  APP_ENV: production
+  APP_NAME: Assignment8-Nginx

@@ -1,0 +1,35 @@
+---
+- name: Configure Web Servers
+  hosts: webservers
+  become: yes
+
+  tasks:
+
+    - name: Install Nginx and curl
+      ansible.builtin.apt:
+        name:
+          - nginx
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy custom web page
+      ansible.builtin.copy:
+        content: |
+          <html>
+          <head>
+            <title>Ansible Assignment 8</title>
+          </head>
+          <body>
+            <h1>Web Server Configured Using Ansible</h1>
+            <p>Server configured automatically using Ansible.</p>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+        mode: '0644'
