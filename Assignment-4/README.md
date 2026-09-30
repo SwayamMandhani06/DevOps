@@ -21,6 +21,7 @@ Python 3.12, Flask, Docker Desktop, Dockerfile, PowerShell.
 ## Project Structure
 ```text
 Assignment-4/
+├── .gitignore
 ├── app.py
 ├── requirements.txt
 ├── Dockerfile

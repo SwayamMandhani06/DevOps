@@ -37,6 +37,7 @@ Browser → Flask Web Container → Docker Compose Network → MongoDB Container
 
 ```text
 Assignment-5/
+├── .gitignore
 ├── app/
 │   ├── app.py
 │   ├── requirements.txt

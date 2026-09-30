@@ -7,6 +7,7 @@
 - **Division / Batch:** C / C2
 - **Subject:** DevOps (BCE27PE01)
 - **Assignment:** 6
+- **Report Document:** [123B1B184_Assignment_6_DevOps.pdf](Report/123B1B184_Assignment_6_DevOps.pdf)
 
 ## Title
 **Continuous Integration with Jenkins and GitHub**
@@ -23,23 +24,26 @@ To integrate the Jenkins automation server with a remote Git repository on GitHu
 ## Project Structure
 ```text
 Assignment-6/
+├── .gitignore
 ├── Jenkinsfile
 ├── README.md
+├── Report/
+│   └── 123B1B184_Assignment_6_DevOps.pdf
 ├── app.py
 └── Screenshots/
-    ├── ss1.png
-    ├── ss2.png
-    ├── ss3.png
-    ├── ss4.png
-    ├── ss5.png
-    ├── ss6.png
-    ├── ss7.png
-    ├── ss8.png
-    ├── ss9.png
-    ├── ss10.png
-    ├── ss11.png
-    ├── ss13.png
-    └── ss14.png
+    ├── 1-jenkins-prerequisites-java-git-verification.png
+    ├── 2-jenkins-dashboard.png
+    ├── 3-jenkins-plugins-github-integration.png
+    ├── 4-assignment-6-source-code-github.png
+    ├── 5-jenkins-source-code-management-configuration.png
+    ├── 6-jenkins-build-step-configuration.png
+    ├── 7-jenkins-console-output-successful-build.png
+    ├── 8-jenkins-workspace-retrieved-source-code.png
+    ├── 9-jenkins-build-updated-github-source.png
+    ├── 10-jenkins-build-history.png
+    ├── 11-jenkins-pipeline-configuration.png
+    ├── 12-jenkins-pipeline-build.png
+    └── 13-jenkins-pipeline-console-output.png
 ```
 
 ## Application
@@ -114,21 +118,21 @@ Jenkins was successfully integrated with GitHub. Source code retrieval on the `m
 
 | Figure | Screenshot | Purpose |
 |---|---|---|
-| 1 | [`ss1.png`](Screenshots/ss1.png) | OpenJDK 21 LTS and Git CLI version verification in PowerShell |
-| 2 | [`ss2.png`](Screenshots/ss2.png) | Jenkins automation server dashboard running locally on `http://localhost:8080` |
-| 3 | [`ss3.png`](Screenshots/ss3.png) | Jenkins installed plugins configuration (Pipeline plugin suite verified) |
-| 4 | [`ss4.png`](Screenshots/ss4.png) | Remote GitHub repository verification under `Assignment-6/` on branch `main` |
-| 5 | [`ss5.png`](Screenshots/ss5.png) | Freestyle project (`GitHub-Jenkins-Demo`) SCM configuration for GitHub repository |
-| 6 | [`ss6.png`](Screenshots/ss6.png) | Freestyle project build step configuration (Execute Windows batch command) |
-| 7 | [`ss7.png`](Screenshots/ss7.png) | Freestyle project build execution status and Git commit revision tracking |
-| 8 | [`ss8.png`](Screenshots/ss8.png) | Jenkins workspace inspection showing retrieved `app.py` and `README.md` |
-| 9 | [`ss9.png`](Screenshots/ss9.png) | Build console output showing successful Git checkout and Python execution |
-| 10 | [`ss10.png`](Screenshots/ss10.png) | SCM polling trigger log (`H/5 * * * *`) and build history status |
-| 11 | [`ss11.png`](Screenshots/ss11.png) | Declarative Pipeline job configuration from SCM pointing to `Assignment-6/Jenkinsfile` |
-| 12 | [`ss13.png`](Screenshots/ss13.png) | Pipeline console execution log displaying Checkout, Build, and Test stage completion |
-| 13 | [`ss14.png`](Screenshots/ss14.png) | Pipeline dashboard overview confirming successful stage execution and stable status |
+| 1 | [`1-jenkins-prerequisites-java-git-verification.png`](Screenshots/1-jenkins-prerequisites-java-git-verification.png) | OpenJDK 21 LTS and Git CLI version verification in PowerShell |
+| 2 | [`2-jenkins-dashboard.png`](Screenshots/2-jenkins-dashboard.png) | Jenkins automation server dashboard running locally on `http://localhost:8080` |
+| 3 | [`3-jenkins-plugins-github-integration.png`](Screenshots/3-jenkins-plugins-github-integration.png) | Jenkins installed plugins configuration (Pipeline plugin suite verified) |
+| 4 | [`4-assignment-6-source-code-github.png`](Screenshots/4-assignment-6-source-code-github.png) | Remote GitHub repository verification under `Assignment-6/` on branch `main` |
+| 5 | [`5-jenkins-source-code-management-configuration.png`](Screenshots/5-jenkins-source-code-management-configuration.png) | Freestyle project (`GitHub-Jenkins-Demo`) SCM configuration for GitHub repository |
+| 6 | [`6-jenkins-build-step-configuration.png`](Screenshots/6-jenkins-build-step-configuration.png) | Freestyle project build step configuration (Execute Windows batch command) |
+| 7 | [`7-jenkins-console-output-successful-build.png`](Screenshots/7-jenkins-console-output-successful-build.png) | Freestyle project build execution status and Git commit revision tracking |
+| 8 | [`8-jenkins-workspace-retrieved-source-code.png`](Screenshots/8-jenkins-workspace-retrieved-source-code.png) | Jenkins workspace inspection showing retrieved `app.py` and `README.md` |
+| 9 | [`9-jenkins-build-updated-github-source.png`](Screenshots/9-jenkins-build-updated-github-source.png) | Build console output showing successful Git checkout and Python execution |
+| 10 | [`10-jenkins-build-history.png`](Screenshots/10-jenkins-build-history.png) | SCM polling trigger log (`H/5 * * * *`) and build history status |
+| 11 | [`11-jenkins-pipeline-configuration.png`](Screenshots/11-jenkins-pipeline-configuration.png) | Declarative Pipeline job configuration from SCM pointing to `Assignment-6/Jenkinsfile` |
+| 12 | [`12-jenkins-pipeline-build.png`](Screenshots/12-jenkins-pipeline-build.png) | Pipeline dashboard overview confirming successful stage execution and stable status |
+| 13 | [`13-jenkins-pipeline-console-output.png`](Screenshots/13-jenkins-pipeline-console-output.png) | Pipeline console execution log displaying Checkout, Build, and Test stage completion |
 
 ## Submission
-**GitHub:** https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-6
-
-**Hosted / Output:** N/A — Local Jenkins automation server.
+- **GitHub Repository:** [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-6](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-6)
+- **Academic Report:** [`Report/123B1B184_Assignment_6_DevOps.pdf`](Report/123B1B184_Assignment_6_DevOps.pdf)
+- **Hosted / Output:** N/A — Local Jenkins automation server.

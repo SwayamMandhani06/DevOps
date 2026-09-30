@@ -40,9 +40,10 @@ This repository serves as a centralized portfolio for all DevOps practical cours
 | **Assignment 4** | Containerization with Docker — Create or Migrate an Application | Docker, Dockerfile, Container Lifecycle, Python 3.12, Flask | **Completed** | [View Assignment 4](./Assignment-4/) |
 | **Assignment 5** | Multi-Container Orchestration with Docker Compose | Docker Compose, Flask, MongoDB 7, Bridge Network, Named Volumes | **Completed** | [View Assignment 5](./Assignment-5/) |
 | **Assignment 6** | Continuous Integration with Jenkins & GitHub | Jenkins, GitHub SCM, Freestyle Project, Declarative Pipeline, SCM Polling, Python 3.12 | **Completed** | [View Assignment 6](./Assignment-6/) |
+| **Assignment 7** | Kubernetes Architecture & Package Management with Helm | Kubernetes, Helm 3, Docker Desktop K8s, NGINX, Pods, Deployments, NodePort Service | **Completed** | [View Assignment 7](./Assignment-7/) |
 
 > [!NOTE]
-> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, 4, 5, and 6 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides.
+> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, 4, 5, 6, and 7 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides.
 
 ---
 
@@ -575,20 +576,21 @@ The Continuous Integration setup is organized under [`Assignment-6/`](./Assignme
 
 ### Output / Evidence
 - **Screenshots**: 13 comprehensive output verification screenshots located in [Assignment-6/Screenshots/](./Assignment-6/Screenshots/)
+- **Academic Report**: Comprehensive PDF report available at [Assignment-6/Report/123B1B184_Assignment_6_DevOps.pdf](./Assignment-6/Report/123B1B184_Assignment_6_DevOps.pdf)
 - **Practical Verification Milestones**: Verified through 13 key milestones:
-  1. Java OpenJDK 21 LTS and Git CLI version verification (`ss1.png`)
-  2. Local Jenkins dashboard operational on port 8080 (`ss2.png`)
-  3. Installed Jenkins Pipeline plugin suite verification (`ss3.png`)
-  4. Remote GitHub repository verification under `Assignment-6/` (`ss4.png`)
-  5. Freestyle project GitHub SCM repository and `main` branch configuration (`ss5.png`)
-  6. Freestyle project Windows batch build command configuration (`ss6.png`)
-  7. Successful build initiation and Git revision tracking (`ss7.png`)
-  8. Jenkins workspace directory inspection with retrieved repository files (`ss8.png`)
-  9. Complete build console output showing successful Python execution (`ss9.png`)
-  10. SCM polling trigger log (`H/5 * * * *`) and build history status (`ss10.png`)
-  11. Declarative Pipeline definition from SCM pointing to `Assignment-6/Jenkinsfile` (`ss11.png`)
-  12. Pipeline console execution output across Checkout, Build, and Test stages (`ss13.png`)
-  13. Pipeline dashboard confirming stage completion and stable build status (`ss14.png`)
+  1. Java OpenJDK 21 LTS and Git CLI version verification (`1-jenkins-prerequisites-java-git-verification.png`)
+  2. Local Jenkins dashboard operational on port 8080 (`2-jenkins-dashboard.png`)
+  3. Installed Jenkins Pipeline plugin suite verification (`3-jenkins-plugins-github-integration.png`)
+  4. Remote GitHub repository verification under `Assignment-6/` (`4-assignment-6-source-code-github.png`)
+  5. Freestyle project GitHub SCM repository and `main` branch configuration (`5-jenkins-source-code-management-configuration.png`)
+  6. Freestyle project Windows batch build command configuration (`6-jenkins-build-step-configuration.png`)
+  7. Successful build initiation and Git revision tracking (`7-jenkins-console-output-successful-build.png`)
+  8. Jenkins workspace directory inspection with retrieved repository files (`8-jenkins-workspace-retrieved-source-code.png`)
+  9. Complete build console output showing successful Python execution (`9-jenkins-build-updated-github-source.png`)
+  10. SCM polling trigger log (`H/5 * * * *`) and build history status (`10-jenkins-build-history.png`)
+  11. Declarative Pipeline definition from SCM pointing to `Assignment-6/Jenkinsfile` (`11-jenkins-pipeline-configuration.png`)
+  12. Pipeline dashboard overview confirming successful stage execution (`12-jenkins-pipeline-build.png`)
+  13. Pipeline console execution output across Checkout, Build, and Test stages (`13-jenkins-pipeline-console-output.png`)
 
 ### Status
 **Completed**
@@ -596,6 +598,178 @@ The Continuous Integration setup is organized under [`Assignment-6/`](./Assignme
 ### Documentation
 - Folder: [Assignment-6/](./Assignment-6/)
 - GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-6](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-6)
+
+
+---
+
+## Assignment 7 — Kubernetes Architecture & Helm Package Manager
+
+### Objective
+To study and practically implement Kubernetes cluster architecture and application package management using Helm, configure a local single-node Kubernetes cluster using Docker Desktop, create a custom Helm chart (`myapp`), validate and template manifests, deploy an NGINX web workload, verify Kubernetes resources (Pods, Deployments, Services), test live web traffic via port-forwarding, perform a rolling release upgrade (scaling replicas from 2 to 3), and execute clean release decommissioning.
+
+### Key Concepts / Technologies
+- **Kubernetes Architecture**:
+  - **Control Plane Components**: `kube-apiserver` (REST API gateway), `etcd` (consistent key-value state store), `kube-scheduler` (workload placement), and `kube-controller-manager` (state reconciliation loops).
+  - **Node Components**: `kubelet` (node agent ensuring container health), `kube-proxy` (network packet forwarding and service proxying), and container runtime (`CRI`).
+  - **Local Cluster Host**: Single-node Kubernetes cluster running inside Docker Desktop (`desktop-control-plane` node in `Ready` status, context: `docker-desktop`).
+- **Helm (Kubernetes Package Manager)**:
+  - Helm v3 client CLI (`v3.15.0`) managing application release lifecycles declaratively without server-side Tiller components.
+  - Parameterized template abstraction decoupling environment variables from raw YAML specifications.
+- **Custom Chart Architecture (`myapp`)**:
+  - `Chart.yaml`: Package metadata, semantic version (`0.1.0`), and application version (`1.16.0`).
+  - `values.yaml`: Centralized configuration variables for replica scale, container image, and service types.
+  - `templates/`: Dynamic Go-templated manifests (`deployment.yaml`, `service.yaml`, `serviceaccount.yaml`, `hpa.yaml`, `ingress.yaml`, `NOTES.txt`).
+- **Pre-deployment Validation**:
+  - `helm lint`: Static syntactic analysis ensuring chart compliance (`1 chart(s) linted, 0 chart(s) failed`).
+  - `helm template`: Dry-run manifest rendering generating raw Kubernetes YAML manifests prior to cluster deployment.
+- **Workload Deployment & Orchestration**:
+  - Deployment of release `myrelease` into the `default` namespace.
+  - Verification of Kubernetes primitives:
+    - **Pods**: 2 initial pods running in `1/1 Ready` state running official `nginx:latest`.
+    - **Deployments**: `myrelease-myapp` maintaining desired replica availability.
+    - **Service**: `NodePort` service mapping port `80` to dynamic node port `32353/TCP`.
+- **Application Connectivity & Port-Forwarding**:
+  - Tunneling local host port `8081` directly to service port `80` using `kubectl port-forward service/myrelease-myapp 8081:80`.
+  - Verification of NGINX landing page in web browser (`http://localhost:8081`).
+- **Rolling Release Upgrade & Workload Scaling**:
+  - Declarative scaling by updating `replicaCount: 3` in `values.yaml` and executing `helm upgrade myrelease .\myapp`.
+  - Zero-downtime rolling update verified with 3/3 pods running and available.
+- **Release Lifecycle Management & Cleanup**:
+  - Clean uninstallation via `helm uninstall myrelease`, removing all associated Pods, ReplicaSets, Deployments, and Services.
+
+### Core Project Files
+The Kubernetes and Helm implementation is organized under [`Assignment-7/`](./Assignment-7/):
+- **[`myapp/Chart.yaml`](./Assignment-7/myapp/Chart.yaml)**: Helm chart metadata defining `apiVersion: v2`, chart name `myapp`, version `0.1.0`, and application version `1.16.0`.
+- **[`myapp/values.yaml`](./Assignment-7/myapp/values.yaml)**: Template values specifying replica count (`3`), image repository (`nginx`), tag (`latest`), and service type (`NodePort`).
+- **[`myapp/templates/`](./Assignment-7/myapp/templates/)**: Manifest templates including `deployment.yaml`, `service.yaml`, `serviceaccount.yaml`, `NOTES.txt`, and helper functions.
+- **[`Assignment-7/.gitignore`](./Assignment-7/.gitignore)**: Ignore patterns for Helm archive packages (`*.tgz`), Kubernetes configurations, and local logs.
+- **[`README.md`](./Assignment-7/README.md)**: Detailed assignment guide covering Kubernetes architecture, Docker Desktop setup, Helm workflow commands, and screenshot evidence.
+
+### Helm Orchestration Workflow & Architecture
+```text
+┌────────────────────────────────────────────────────────┐
+│               Docker Desktop Kubernetes                │
+│         (Single-node: desktop-control-plane)           │
+└───────────────────────────┬────────────────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+┌───────────────────────────┐   ┌────────────────────────┐
+│     Helm Chart Design     │   │   Pre-Flight Validation│
+│  - myapp/Chart.yaml       │──►│   - helm lint          │
+│  - myapp/values.yaml      │   │   - helm template      │
+│  - myapp/templates/       │   │                        │
+└───────────────────────────┘   └───────────┬────────────┘
+                                            │
+                                            ▼
+┌────────────────────────────────────────────────────────┐
+│            Release Deployment: helm install            │
+│               (Release: myrelease, Rev: 1)             │
+└───────────────────────────┬────────────────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+┌───────────────────────────┐   ┌────────────────────────┐
+│  Workload Deployment      │   │     Service Exposure   │
+│  - Pod 1 (nginx:latest)   │   │  - ServiceAccount      │
+│  - Pod 2 (nginx:latest)   │   │  - Service (NodePort)  │
+│  (myrelease-myapp: 2/2)   │   │    ClusterIP:80->32353 │
+└─────────────┬─────────────┘   └───────────┬────────────┘
+              │                             │
+              └──────────────┬──────────────┘
+                             ▼
+┌────────────────────────────────────────────────────────┐
+│       kubectl port-forward service/... 8081:80         │
+│            Browser: http://localhost:8081              │
+│               ("Welcome to nginx!")                    │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│     Rolling Upgrade: helm upgrade (replicas: 2 -> 3)   │
+│      - Pod 1, Pod 2, Pod 3 (Ready 3/3, Revision 2)     │
+└───────────────────────────┬────────────────────────────┘
+                            │
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│     Teardown & Cleanup: helm uninstall myrelease       │
+│      - Zero resources remaining in default namespace   │
+└────────────────────────────────────────────────────────┘
+```
+
+1. **Local Kubernetes & Helm Verification**:
+   - Verified Docker Engine (`v29.x`), `kubectl` client, `docker-desktop` context, and cluster control-plane endpoints:
+     ```powershell
+     kubectl cluster-info
+     kubectl get nodes
+     helm version
+     ```
+2. **Chart Creation & Linting**:
+   - Initialized `myapp` chart and performed syntax and structure verification:
+     ```powershell
+     helm create myapp
+     helm lint .\myapp
+     helm template myapp .\myapp
+     ```
+3. **Application Deployment**:
+   - Deployed release `myrelease` and verified running workloads:
+     ```powershell
+     helm install myrelease .\myapp
+     kubectl get pods
+     kubectl get deployments
+     kubectl get services
+     helm list
+     ```
+4. **Application Access via Port Forwarding**:
+   - Forwarded traffic from local port `8081` to container port `80`:
+     ```powershell
+     kubectl port-forward service/myrelease-myapp 8081:80
+     ```
+   - Verified HTTP response in browser on `http://localhost:8081` confirming live NGINX serving.
+5. **Declarative Rolling Upgrade**:
+   - Updated `values.yaml` to scale replicas from 2 to 3, and applied the upgrade:
+     ```powershell
+     helm upgrade myrelease .\myapp
+     kubectl get pods
+     helm status myrelease
+     ```
+   - Confirmed 3 pods running in `Ready` state without downtime.
+6. **Teardown & Verification**:
+   - Uninstalled the release and confirmed clean namespace state:
+     ```powershell
+     helm uninstall myrelease
+     kubectl get pods
+     kubectl get deployments
+     kubectl get services
+     ```
+
+### Output / Evidence
+- **Screenshots**: 16 comprehensive output verification screenshots located in [Assignment-7/Screenshots/](./Assignment-7/Screenshots/)
+- **Academic Report**: Comprehensive PDF report available at [Assignment-7/Report/123B1B184_Assignment_7_DevOps.pdf](./Assignment-7/Report/123B1B184_Assignment_7_DevOps.pdf)
+- **Practical Verification Milestones**: Verified through 16 key execution milestones:
+  1. Docker, `kubectl`, context, and cluster endpoint verification (`1-kubernetes-tools-verification.png`)
+  2. Cluster info and default namespace listing (`2-kubernetes-cluster-info.png`)
+  3. Single-node `desktop-control-plane` ready status check (`3-kubernetes-nodes.png`)
+  4. Kubernetes cluster control plane and worker architecture verification (`4-kubernetes-architecture.png`)
+  5. Helm v3 version and command documentation verification (`5-helm-version.png`)
+  6. Custom Helm chart creation (`6-helm-chart-created.png`)
+  7. Chart directory structure and template inventory (`7-helm-chart-structure.png`)
+  8. Static chart linting and dry-run template rendering (`8-helm-template-output.png`)
+  9. Successful Helm release installation with revision 1 (`9-helm-install-success.png`)
+  10. Pods, Deployments, and NodePort Service verification (`10-kubernetes-pods-deployments-services.png`)
+  11. Helm release listing and status verification (`11-helm-list-and-status.png`)
+  12. Kubernetes port-forwarding configuration (`12-kubernetes-port-forward-configuration.png`)
+  13. Live NGINX web application verification on `http://localhost:8081` (`13-kubernetes-application-running.png`)
+  14. Rolling release upgrade execution via `helm upgrade` (`14-helm-upgrade.png`)
+  15. Scaling verification confirming 3/3 active running Pods (`15-kubernetes-upgrade-verification.png`)
+  16. Clean release uninstallation and namespace resource teardown (`16-helm-uninstall.png`)
+
+### Status
+**Completed**
+
+### Documentation
+- Folder: [Assignment-7/](./Assignment-7/)
+- GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-7](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-7)
 
 # Technologies Used
 
@@ -620,7 +794,9 @@ The Continuous Integration setup is organized under [`Assignment-6/`](./Assignme
 - **Jenkinsfile** (Pipeline as Code declarative specification)
 
 ### Containers & Virtualization
-- **Docker Engine & Docker Desktop** (Container runtime, daemon, and image management)
+- **Kubernetes (K8s)** (Container orchestration, Pods, Deployments, NodePort Services, ServiceAccounts, local cluster via Docker Desktop)
+- **Helm 3** (The Kubernetes Package Manager, Chart templating, parameterization, release lifecycle management)
+- **Docker Engine & Docker Desktop** (Container runtime, daemon, local Kubernetes single-node cluster, and image management)
 - **Docker Compose** (Declarative multi-container application specification and orchestration)
 - **Dockerfile** (Declarative container build specifications)
 - **Docker CLI** (Image building, container execution, inspection, lifecycle, and teardown)
@@ -642,6 +818,7 @@ The Continuous Integration setup is organized under [`Assignment-6/`](./Assignme
 - **Python 3.12** (Flask web service, PyMongo integration, AWS Lambda handler, CI demo script)
 - **HashiCorp Configuration Language (HCL)** (Terraform configuration)
 - **Docker Compose YAML Specification** (Multi-service deployment configuration)
+- **Helm & Go Template Syntax** (Kubernetes manifest parameterization in templates and values.yaml)
 - **Jenkins Declarative Pipeline Groovy Syntax** (Pipeline as Code definition in Jenkinsfile)
 - **Dockerfile Syntax** (Container image build instructions)
 
@@ -651,6 +828,7 @@ The Continuous Integration setup is organized under [`Assignment-6/`](./Assignme
 
 ```text
 DevOps/
+├── .gitignore                                   # Global repository ignore rules
 ├── README.md                                    # Master repository documentation (this file)
 ├── Assignment-2/                                # Assignment 02: AWS Cloud Computing Services
 │   ├── README.md                                # Detailed Assignment 2 technical guide
@@ -698,6 +876,7 @@ DevOps/
 │       ├── outputs.tf
 │       └── .gitignore
 ├── Assignment-4/                                # Assignment 04: Create or Migrate an Application to Docker
+│   ├── .gitignore                               # Python and Docker ignore rules
 │   ├── README.md                                # Detailed Assignment 4 containerization guide
 │   ├── app.py                                   # Python Flask web application (ports & health routes)
 │   ├── requirements.txt                         # Application runtime dependencies (Flask)
@@ -722,6 +901,7 @@ DevOps/
 │       ├── 12-container-removed.png
 │       └── 13-docker-image-cleanup.png
 ├── Assignment-5/                                # Assignment 05: Multi-Container Orchestration with Docker Compose
+│   ├── .gitignore                               # Python and Docker Compose ignore rules
 │   ├── README.md                                # Detailed Assignment 5 orchestration guide
 │   ├── compose.yaml                             # Docker Compose multi-service definition
 │   ├── app/                                     # Flask application source directory
@@ -745,24 +925,65 @@ DevOps/
 │       ├── 10-mongodb-stored-data.png
 │       ├── 11-volume-persistence-verification.png
 │       └── 12-docker-shutdown.png
-└── Assignment-6/                                # Assignment 06: Continuous Integration with Jenkins & GitHub
-    ├── README.md                                # Detailed Assignment 6 CI integration guide
-    ├── Jenkinsfile                              # Declarative Pipeline definition (Checkout, Build, Test)
-    ├── app.py                                   # Python demo application for build execution
-    └── Screenshots/                             # CI verification screenshots (13 figures)
-        ├── ss1.png
-        ├── ss2.png
-        ├── ss3.png
-        ├── ss4.png
-        ├── ss5.png
-        ├── ss6.png
-        ├── ss7.png
-        ├── ss8.png
-        ├── ss9.png
-        ├── ss10.png
-        ├── ss11.png
-        ├── ss13.png
-        └── ss14.png
+├── Assignment-6/                                # Assignment 06: Continuous Integration with Jenkins & GitHub
+│   ├── .gitignore                               # Python and Jenkins workspace ignore rules
+│   ├── README.md                                # Detailed Assignment 6 CI integration guide
+│   ├── Jenkinsfile                              # Declarative Pipeline definition (Checkout, Build, Test)
+│   ├── app.py                                   # Python demo application for build execution
+│   ├── Report/                                  # Academic submission report
+│   │   └── 123B1B184_Assignment_6_DevOps.pdf
+│   └── Screenshots/                             # CI verification screenshots (13 figures)
+│       ├── 1-jenkins-prerequisites-java-git-verification.png
+│       ├── 2-jenkins-dashboard.png
+│       ├── 3-jenkins-plugins-github-integration.png
+│       ├── 4-assignment-6-source-code-github.png
+│       ├── 5-jenkins-source-code-management-configuration.png
+│       ├── 6-jenkins-build-step-configuration.png
+│       ├── 7-jenkins-console-output-successful-build.png
+│       ├── 8-jenkins-workspace-retrieved-source-code.png
+│       ├── 9-jenkins-build-updated-github-source.png
+│       ├── 10-jenkins-build-history.png
+│       ├── 11-jenkins-pipeline-configuration.png
+│       ├── 12-jenkins-pipeline-build.png
+│       └── 13-jenkins-pipeline-console-output.png
+└── Assignment-7/                                # Assignment 07: Kubernetes Architecture and Helm Package Manager
+    ├── README.md                                # Detailed Assignment 7 Kubernetes & Helm guide
+    ├── .gitignore                               # Helm and Kubernetes ignore rules
+    ├── Report/                                  # Academic submission report
+    │   └── 123B1B184_Assignment_7_DevOps.pdf
+    ├── Screenshots/                             # Practical output verification screenshots (16 figures)
+    │   ├── 1-kubernetes-tools-verification.png
+    │   ├── 2-kubernetes-cluster-info.png
+    │   ├── 3-kubernetes-nodes.png
+    │   ├── 4-kubernetes-architecture.png
+    │   ├── 5-helm-version.png
+    │   ├── 6-helm-chart-created.png
+    │   ├── 7-helm-chart-structure.png
+    │   ├── 8-helm-template-output.png
+    │   ├── 9-helm-install-success.png
+    │   ├── 10-kubernetes-pods-deployments-services.png
+    │   ├── 11-helm-list-and-status.png
+    │   ├── 12-kubernetes-port-forward-configuration.png
+    │   ├── 13-kubernetes-application-running.png
+    │   ├── 14-helm-upgrade.png
+    │   ├── 15-kubernetes-upgrade-verification.png
+    │   └── 16-helm-uninstall.png
+    └── myapp/                                   # Custom Helm Chart package
+        ├── .helmignore                          # Helm package ignore rules
+        ├── Chart.yaml                           # Chart metadata and semantic versioning
+        ├── values.yaml                          # Configurable deployment values (replicas, image, service)
+        ├── charts/                              # Dependent chart packages
+        └── templates/                           # Kubernetes resource templates
+            ├── NOTES.txt                        # Post-installation instructions
+            ├── _helpers.tpl                     # Reusable template definitions
+            ├── deployment.yaml                  # Kubernetes Deployment template
+            ├── hpa.yaml                         # Horizontal Pod Autoscaler template
+            ├── httproute.yaml                   # Gateway API HTTPRoute template
+            ├── ingress.yaml                     # Ingress controller template
+            ├── service.yaml                     # Kubernetes Service template
+            ├── serviceaccount.yaml              # Kubernetes ServiceAccount template
+            └── tests/                           # Helm chart test suite
+                └── test-connection.yaml
 ```
 
 ---

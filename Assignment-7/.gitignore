@@ -1,0 +1,23 @@
+# Helm package archives & lock files
+*.tgz
+*.tgz.prov
+charts/*.tgz
+.helm/
+
+# Kubernetes configuration & credentials
+*.kubeconfig
+kubeconfig*
+.kube/
+
+# Temporary files, logs & OS artifacts
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+
+# IDE & Editor settings
+.vscode/
+.idea/
