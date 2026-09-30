@@ -39,9 +39,10 @@ This repository serves as a centralized portfolio for all DevOps practical cours
 | **Assignment 3** | Infrastructure as Code (IaC) using Terraform for AWS EC2 Provisioning | Terraform, AWS EC2, Security Groups, NGINX, Ubuntu 24.04, AWS CLI | **Completed** | [View Assignment 3](./Assignment-3/) |
 | **Assignment 4** | Containerization with Docker — Create or Migrate an Application | Docker, Dockerfile, Container Lifecycle, Python 3.12, Flask | **Completed** | [View Assignment 4](./Assignment-4/) |
 | **Assignment 5** | Multi-Container Orchestration with Docker Compose | Docker Compose, Flask, MongoDB 7, Bridge Network, Named Volumes | **Completed** | [View Assignment 5](./Assignment-5/) |
+| **Assignment 6** | Continuous Integration with Jenkins & GitHub | Jenkins, GitHub SCM, Freestyle Project, Declarative Pipeline, SCM Polling, Python 3.12 | **Completed** | [View Assignment 6](./Assignment-6/) |
 
 > [!NOTE]
-> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, 4, and 5 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides.
+> Detailed implementations and artifacts are actively documented upon practical completion. Assignments 2, 3, 4, 5, and 6 are fully implemented, verified, and documented with complete configuration code, screenshots, and technical guides.
 
 ---
 
@@ -447,6 +448,155 @@ The multi-container application is organized under [`Assignment-5/`](./Assignmen
 - Folder: [Assignment-5/](./Assignment-5/)
 - GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-5](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-5)
 
+
+---
+
+## Assignment 6 — Continuous Integration with Jenkins & GitHub
+
+### Objective
+To implement Continuous Integration (CI) by integrating Jenkins automation server with a remote GitHub repository, automating source code retrieval on the `main` branch, implementing both Jenkins Freestyle projects and Declarative Pipelines, setting up automated SCM polling (`H/5 * * * *`), executing automated Python build verification commands, and validating multi-stage pipeline lifecycles.
+
+### Key Concepts / Technologies
+- **Continuous Integration (CI)**: Automated code retrieval, build execution, and validation upon repository updates to identify integration issues early.
+- **Jenkins Automation Server**: Standalone automation engine (v2.568.3) running locally on `http://localhost:8080`, managed via OpenJDK 21 LTS runtime.
+- **GitHub SCM Integration**: Remote Git repository integration (`https://github.com/SwayamMandhani06/DevOps.git`) with automatic branch tracking for the `main` branch.
+- **Freestyle Project Implementation (`GitHub-Jenkins-Demo`)**:
+  - Direct SCM integration binding to the Git repository.
+  - SCM Polling schedule (`H/5 * * * *`) configuring Jenkins to poll GitHub every 5 minutes for new commits.
+  - Automated Windows batch build execution (`cd Assignment-6 && python app.py`).
+  - Automated workspace population with project source files.
+- **Declarative Pipeline as Code (`GitHub-Jenkins-Pipeline`)**:
+  - Declarative pipeline configuration defined in [`Assignment-6/Jenkinsfile`](./Assignment-6/Jenkinsfile).
+  - Version-controlled pipeline orchestrated via *Pipeline script from SCM* with lightweight checkout.
+  - Multi-stage pipeline execution:
+    - **Checkout**: Clones the remote repository and checks out the latest commit on `main`.
+    - **Build**: Navigates to `Assignment-6/` and executes the Python application.
+    - **Test**: Executes automated test steps validating build status.
+- **Python Application Execution**: Python 3.12 script ([`Assignment-6/app.py`](./Assignment-6/app.py)) verifying successful automated checkout from `main` and outputting CI execution confirmation.
+- **Build Verification & Inspection**: Verification through Jenkins console outputs, build history logs, workspace directory inspection, and execution permalinks.
+
+### Core Project Files
+The Continuous Integration setup is organized under [`Assignment-6/`](./Assignment-6/):
+- **[`Jenkinsfile`](./Assignment-6/Jenkinsfile)**: Declarative Pipeline script defining agent, stages (`Checkout`, `Build`, `Test`), and batch execution steps.
+- **[`app.py`](./Assignment-6/app.py)**: Python application executed by Jenkins during build steps to verify source retrieval and build success.
+- **[`README.md`](./Assignment-6/README.md)**: Dedicated assignment guide covering Jenkins installation, Freestyle job configuration, Declarative Pipeline setup, and screenshot evidence.
+
+### CI Workflow & Implementation
+```text
+┌────────────────────────────────────────────────────────┐
+│             Developer Pushes to GitHub                 │
+│         (Branch: main, Commit: e709e5b / 7d34a2a)      │
+└───────────────────────────┬────────────────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+┌───────────────────────────┐   ┌────────────────────────┐
+│  SCM Polling (H/5 * * * *)│   │   Manual / Triggered   │
+│ (Periodic GitHub Checking)│   │   Pipeline Execution   │
+└─────────────┬─────────────┘   └───────────┬────────────┘
+              │                             │
+              └──────────────┬──────────────┘
+                             ▼
+┌────────────────────────────────────────────────────────┐
+│             Jenkins CI Server (:8080)                  │
+│               - OpenJDK 21 Runtime                     │
+│               - Git SCM Integration                    │
+└───────────────────────────┬────────────────────────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              ▼                           ▼
+┌───────────────────────────┐   ┌────────────────────────┐
+│  Freestyle Project        │   │  Declarative Pipeline  │
+│  (GitHub-Jenkins-Demo)    │   │ (GitHub-Jenkins-Pipeline)│
+│  - Git checkout main      │   │  - Pipeline from SCM   │
+│  - Poll SCM: H/5 * * * *  │   │  - Assignment-6/       │
+│  - Batch: python app.py   │   │    Jenkinsfile         │
+└─────────────┬─────────────┘   └───────────┬────────────┘
+              │                             │
+              │                 ┌───────────┴────────────┐
+              │                 ▼                        │
+              │          ┌──────────────┐                │
+              │          │ 1. Checkout  │ (Git clone main)
+              │          ├──────────────┤                │
+              │          │ 2. Build     │ (python app.py)│
+              │          ├──────────────┤                │
+              │          │ 3. Test      │ (Test suite)   │
+              │          └──────────────┘                │
+              │                             │
+              └──────────────┬──────────────┘
+                             ▼
+┌────────────────────────────────────────────────────────┐
+│                  Build Verification                    │
+│ - Console Log: "Finished: SUCCESS"                     │
+│ - Workspace Files: app.py, README.md                   │
+│ - Automated Execution: Latest code from main branch    │
+└────────────────────────────────────────────────────────┘
+```
+
+1. **Prerequisite & Environment Setup**:
+   - Verified OpenJDK 21 LTS (`java -version`, `where.exe java`) and Git CLI (`git --version`).
+   - Accessed and configured Jenkins dashboard at `http://localhost:8080`.
+   - Verified installed plugins including `Pipeline`, `Pipeline Graph View`, and `Pipeline: Declarative`.
+2. **Freestyle Project Setup (`GitHub-Jenkins-Demo`)**:
+   - Configured Git Source Code Management with repository URL `https://github.com/SwayamMandhani06/DevOps.git`.
+   - Set branch specifier to `*/main`.
+   - Configured Build Trigger: **Poll SCM** with schedule `H/5 * * * *` (polling every 5 minutes).
+   - Added build step **Execute Windows batch command**:
+     ```bat
+     cd Assignment-6
+     "C:\Users\Admin\AppData\Local\Programs\Python\Python312\python.exe" app.py
+     ```
+3. **Freestyle Build Execution & Verification**:
+   - Triggered builds and verified automatic detection of remote repository updates.
+   - Inspected Jenkins workspace on built-in node, confirming automated retrieval of `app.py` and `README.md`.
+   - Inspected console log output for successful checkout and execution:
+     ```text
+     Checking out Revision 7d34a2a26bef5fab5663e1a9064f6fc31da177dc (refs/remotes/origin/main)
+     Commit message: "Update Jenkins demo application"
+     ========================================
+      Jenkins + GitHub CI/CD Demo
+     ========================================
+     Updated source code successfully retrieved from GitHub.
+     Jenkins executed the latest version from the main branch.
+     Assignment 6 - DevOps
+     Finished: SUCCESS
+     ```
+4. **Declarative Pipeline Implementation (`GitHub-Jenkins-Pipeline`)**:
+   - Created a new Pipeline item configured with **Pipeline script from SCM**.
+   - Selected SCM as **Git**, configured repository URL `https://github.com/SwayamMandhani06/DevOps.git`, and branch `*/main`.
+   - Configured Script Path to [`Assignment-6/Jenkinsfile`](./Assignment-6/Jenkinsfile) with lightweight checkout.
+5. **Pipeline Multi-Stage Execution & Verification**:
+   - Executed Pipeline Build #1, obtaining the version-controlled `Jenkinsfile` directly from GitHub.
+   - Verified sequential execution through defined stages:
+     - **Checkout**: Successfully cloned Git repository at revision `b1f96dc`.
+     - **Build**: Navigated to `Assignment-6/` and executed Python application via batch command.
+     - **Test**: Executed automated validation steps.
+   - Confirmed build status as **SUCCESS** in both console output and Pipeline overview dashboard.
+
+### Output / Evidence
+- **Screenshots**: 13 comprehensive output verification screenshots located in [Assignment-6/Screenshots/](./Assignment-6/Screenshots/)
+- **Practical Verification Milestones**: Verified through 13 key milestones:
+  1. Java OpenJDK 21 LTS and Git CLI version verification (`ss1.png`)
+  2. Local Jenkins dashboard operational on port 8080 (`ss2.png`)
+  3. Installed Jenkins Pipeline plugin suite verification (`ss3.png`)
+  4. Remote GitHub repository verification under `Assignment-6/` (`ss4.png`)
+  5. Freestyle project GitHub SCM repository and `main` branch configuration (`ss5.png`)
+  6. Freestyle project Windows batch build command configuration (`ss6.png`)
+  7. Successful build initiation and Git revision tracking (`ss7.png`)
+  8. Jenkins workspace directory inspection with retrieved repository files (`ss8.png`)
+  9. Complete build console output showing successful Python execution (`ss9.png`)
+  10. SCM polling trigger log (`H/5 * * * *`) and build history status (`ss10.png`)
+  11. Declarative Pipeline definition from SCM pointing to `Assignment-6/Jenkinsfile` (`ss11.png`)
+  12. Pipeline console execution output across Checkout, Build, and Test stages (`ss13.png`)
+  13. Pipeline dashboard confirming stage completion and stable build status (`ss14.png`)
+
+### Status
+**Completed**
+
+### Documentation
+- Folder: [Assignment-6/](./Assignment-6/)
+- GitHub Direct Link: [https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-6](https://github.com/SwayamMandhani06/DevOps/tree/main/Assignment-6)
+
 # Technologies Used
 
 ### Cloud Computing Platform
@@ -463,6 +613,11 @@ The multi-container application is organized under [`Assignment-5/`](./Assignmen
 
 ### Infrastructure as Code (IaC)
 - **HashiCorp Terraform** (Core CLI v1.5+, AWS Provider `~> 6.0`, State Management, Lifecycle Automation)
+
+### CI/CD & Automation
+- **Jenkins** (Continuous Integration automation server v2.568.3, Freestyle jobs, Declarative Pipelines, SCM polling, workspace management)
+- **GitHub SCM Integration** (Remote Git repository integration, branch tracking, automated checkout)
+- **Jenkinsfile** (Pipeline as Code declarative specification)
 
 ### Containers & Virtualization
 - **Docker Engine & Docker Desktop** (Container runtime, daemon, and image management)
@@ -484,9 +639,10 @@ The multi-container application is organized under [`Assignment-5/`](./Assignmen
 - **EC2 Instance Connect & SSH** (Secure remote shell access)
 
 ### Languages & Configuration Formats
-- **Python 3.12** (Flask web service, PyMongo integration, AWS Lambda handler)
+- **Python 3.12** (Flask web service, PyMongo integration, AWS Lambda handler, CI demo script)
 - **HashiCorp Configuration Language (HCL)** (Terraform configuration)
 - **Docker Compose YAML Specification** (Multi-service deployment configuration)
+- **Jenkins Declarative Pipeline Groovy Syntax** (Pipeline as Code definition in Jenkinsfile)
 - **Dockerfile Syntax** (Container image build instructions)
 
 ---
@@ -565,30 +721,48 @@ DevOps/
 │       ├── 11-restart-docker-container.png
 │       ├── 12-container-removed.png
 │       └── 13-docker-image-cleanup.png
-└── Assignment-5/                                # Assignment 05: Multi-Container Orchestration with Docker Compose
-    ├── README.md                                # Detailed Assignment 5 orchestration guide
-    ├── compose.yaml                             # Docker Compose multi-service definition
-    ├── app/                                     # Flask application source directory
-    │   ├── app.py                               # Flask web service with MongoDB integration
-    │   ├── requirements.txt                     # Dependencies (Flask, pymongo)
-    │   ├── Dockerfile                           # Container build instructions
-    │   └── .dockerignore                        # Build context exclusions
-    ├── Report/                                  # Academic submission report
-    │   └── 123B1B184_Assignment_5_DevOps.pdf
-    └── Screenshots/                             # Practical output verification screenshots (13 figures)
-        ├── 1-docker-compose-configuration-validation.png
-        ├── 2-docker-compose-build.png
-        ├── 3-multi-container-application.png
-        ├── 4-flask-web-application.png
-        ├── 5-application health.png
-        ├── 6-flask-mongodb-communication.png
-        ├── 7-docker-compose-logs.png
-        ├── 8-docker-compose-network (1).png
-        ├── 8-docker-compose-network (2).png
-        ├── 9-mongodb-persistent-volume.png
-        ├── 10-mongodb-stored-data.png
-        ├── 11-volume-persistence-verification.png
-        └── 12-docker-shutdown.png
+├── Assignment-5/                                # Assignment 05: Multi-Container Orchestration with Docker Compose
+│   ├── README.md                                # Detailed Assignment 5 orchestration guide
+│   ├── compose.yaml                             # Docker Compose multi-service definition
+│   ├── app/                                     # Flask application source directory
+│   │   ├── app.py                               # Flask web service with MongoDB integration
+│   │   ├── requirements.txt                     # Dependencies (Flask, pymongo)
+│   │   ├── Dockerfile                           # Container build instructions
+│   │   └── .dockerignore                        # Build context exclusions
+│   ├── Report/                                  # Academic submission report
+│   │   └── 123B1B184_Assignment_5_DevOps.pdf
+│   └── Screenshots/                             # Practical output verification screenshots (13 figures)
+│       ├── 1-docker-compose-configuration-validation.png
+│       ├── 2-docker-compose-build.png
+│       ├── 3-multi-container-application.png
+│       ├── 4-flask-web-application.png
+│       ├── 5-application health.png
+│       ├── 6-flask-mongodb-communication.png
+│       ├── 7-docker-compose-logs.png
+│       ├── 8-docker-compose-network (1).png
+│       ├── 8-docker-compose-network (2).png
+│       ├── 9-mongodb-persistent-volume.png
+│       ├── 10-mongodb-stored-data.png
+│       ├── 11-volume-persistence-verification.png
+│       └── 12-docker-shutdown.png
+└── Assignment-6/                                # Assignment 06: Continuous Integration with Jenkins & GitHub
+    ├── README.md                                # Detailed Assignment 6 CI integration guide
+    ├── Jenkinsfile                              # Declarative Pipeline definition (Checkout, Build, Test)
+    ├── app.py                                   # Python demo application for build execution
+    └── Screenshots/                             # CI verification screenshots (13 figures)
+        ├── ss1.png
+        ├── ss2.png
+        ├── ss3.png
+        ├── ss4.png
+        ├── ss5.png
+        ├── ss6.png
+        ├── ss7.png
+        ├── ss8.png
+        ├── ss9.png
+        ├── ss10.png
+        ├── ss11.png
+        ├── ss13.png
+        └── ss14.png
 ```
 
 ---
